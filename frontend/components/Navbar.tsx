@@ -17,10 +17,12 @@ export function Navbar() {
 
     return (
         <nav className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-md">
-            <div className="container flex h-16 items-center justify-between">
+            <div className="container mx-auto flex h-16 items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <Link href="/" className="text-xl font-bold tracking-tighter text-foreground">
-                        <span className="text-primary">RED</span>RENT
+                    <Link href="/" className="flex items-center gap-2">
+                        <span className="text-xl font-extrabold tracking-tighter text-foreground">
+                            <span className="text-primary">MISTERS</span> DRIVERS
+                        </span>
                     </Link>
                 </div>
 

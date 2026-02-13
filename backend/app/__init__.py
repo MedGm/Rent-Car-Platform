@@ -13,7 +13,8 @@ def create_app(config_class=Config):
 
     db.init_app(app)
     migrate.init_app(app, db)
-    CORS(app)
+    # Enable CORS for frontend requests
+    CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000"]}})
 
     from app import models
     from app.auth import auth_bp
@@ -23,5 +24,13 @@ def create_app(config_class=Config):
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(cars_bp, url_prefix='/api/cars')
     app.register_blueprint(bookings_bp, url_prefix='/api/bookings')
+
+    # Serve static files (uploads) in development
+    import os
+    from flask import send_from_directory
+
+    @app.route('/static/uploads/<path:filename>')
+    def serve_uploads(filename):
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
     return app

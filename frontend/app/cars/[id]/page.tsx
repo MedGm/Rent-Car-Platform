@@ -8,20 +8,38 @@ import { ArrowLeft, Check, MessageCircle, Shield } from "lucide-react";
 
 async function getCar(id: string) {
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://backend:5000/api'}/cars/${id}`, {
+        // Use internal backend URL for server-side fetching
+        const apiUrl = 'http://backend:5000/api';
+        const url = `${apiUrl}/cars/${id}`;
+        console.log(`[getCar] Fetching: ${url}`);
+
+        const res = await fetch(url, {
             cache: 'no-store'
         });
-        if (!res.ok) return null;
+
+        console.log(`[getCar] Response status: ${res.status}`);
+
+        if (!res.ok) {
+            console.error(`[getCar] Failed to fetch car ${id}: ${res.status} ${res.statusText}`);
+            return null;
+        }
         return res.json();
     } catch (error) {
+        console.error(`[getCar] Error fetching car ${id}:`, error);
         return null;
     }
 }
 
-export default async function CarDetailsPage({ params }: { params: { id: string } }) {
-    const car = await getCar(params.id);
+export default async function CarDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+
+    // Add debug log
+    console.log(`[CarDetailsPage] Rendering car details for ID: ${id}`);
+
+    const car = await getCar(id);
 
     if (!car) {
+        console.error(`[CarDetailsPage] Car not found for ID: ${id}`);
         notFound();
     }
 
@@ -45,7 +63,7 @@ export default async function CarDetailsPage({ params }: { params: { id: string 
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
 
-                <div className="absolute bottom-0 left-0 p-6 md:p-12 container">
+                <div className="absolute bottom-0 left-0 p-6 md:p-12 container mx-auto">
                     <Link href="/cars" className="inline-flex items-center text-sm font-medium text-white/80 hover:text-white mb-4 transition-colors">
                         <ArrowLeft className="mr-2 h-4 w-4" /> Back to Fleet
                     </Link>
@@ -58,7 +76,7 @@ export default async function CarDetailsPage({ params }: { params: { id: string 
                 </div>
             </div>
 
-            <div className="container mt-8 grid gap-12 lg:grid-cols-3">
+            <div className="container mx-auto mt-8 grid gap-12 lg:grid-cols-3">
                 {/* Main Content */}
                 <div className="lg:col-span-2 space-y-12">
 
@@ -94,7 +112,7 @@ export default async function CarDetailsPage({ params }: { params: { id: string 
                 {/* Sidebar */}
                 <div className="space-y-6">
                     {/* Action Card */}
-                    <div className="rounded-2xl border bg-card p-6 shadow-lg">
+                    <div className="rounded-2xl border bg-white p-6 shadow-lg">
                         <div className="mb-6 flex items-center gap-3">
                             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
                                 <MessageCircle className="h-5 w-5 text-green-600" />

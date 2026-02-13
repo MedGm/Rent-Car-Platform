@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { X, Calendar } from "lucide-react";
+import { X, Calendar, CheckCircle } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 interface BookingFormProps {
     carId: number;
@@ -12,6 +15,7 @@ interface BookingFormProps {
 
 export function BookingForm({ carId, carName, isOpen, onClose }: BookingFormProps) {
     const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
     const [formData, setFormData] = useState({
         start_date: "",
         end_date: "",
@@ -35,8 +39,11 @@ export function BookingForm({ carId, carName, isOpen, onClose }: BookingFormProp
 
             if (!res.ok) throw new Error("Booking failed");
 
-            alert("Booking request submitted successfully! We will contact you shortly.");
-            onClose();
+            setSuccess(true);
+            setTimeout(() => {
+                setSuccess(false);
+                onClose();
+            }, 2000);
         } catch (error) {
             alert("Failed to submit booking. Please try again.");
         } finally {
@@ -45,83 +52,106 @@ export function BookingForm({ carId, carName, isOpen, onClose }: BookingFormProp
     }
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-            <div className="w-full max-w-md rounded-2xl bg-card p-6 shadow-xl animate-in fade-in zoom-in duration-200">
-                <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold">Request to Rent: {carName}</h2>
-                    <button onClick={onClose} className="rounded-full p-2 hover:bg-muted transition-colors">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-in fade-in duration-200">
+            <div className="w-full max-w-lg rounded-3xl bg-white p-0 shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden">
+                <div className="bg-neutral-900 p-6 text-white flex items-center justify-between">
+                    <div>
+                        <h2 className="text-2xl font-bold tracking-tight">Request to Rent</h2>
+                        <p className="text-neutral-400 text-sm mt-1">{carName}</p>
+                    </div>
+                    <button onClick={onClose} className="rounded-full bg-white/10 p-2 hover:bg-white/20 transition-colors">
                         <X className="h-5 w-5" />
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Start Date</label>
-                            <input
-                                type="date"
-                                required
-                                className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
-                                value={formData.start_date}
-                                onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                            />
+                <div className="p-8">
+                    {success ? (
+                        <div className="flex flex-col items-center justify-center py-10 text-center space-y-4 animate-in fade-in slide-in-from-bottom-4">
+                            <div className="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center">
+                                <CheckCircle className="h-8 w-8 text-green-600" />
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-bold">Request Sent!</h3>
+                                <p className="text-muted-foreground">We will contact you shortly to confirm.</p>
+                            </div>
                         </div>
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">End Date</label>
-                            <input
-                                type="date"
-                                required
-                                className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
-                                value={formData.end_date}
-                                onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-                            />
-                        </div>
-                    </div>
+                    ) : (
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="grid grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <Label htmlFor="start_date">Start Date</Label>
+                                    <Input
+                                        id="start_date"
+                                        type="date"
+                                        required
+                                        value={formData.start_date}
+                                        onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                                        className="h-11"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="end_date">End Date</Label>
+                                    <Input
+                                        id="end_date"
+                                        type="date"
+                                        required
+                                        value={formData.end_date}
+                                        onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                                        className="h-11"
+                                    />
+                                </div>
+                            </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Full Name</label>
-                        <input
-                            type="text"
-                            required
-                            className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
-                            placeholder="John Doe"
-                            value={formData.driver_name}
-                            onChange={(e) => setFormData({ ...formData, driver_name: e.target.value })}
-                        />
-                    </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="driver_name">Full Name</Label>
+                                <Input
+                                    id="driver_name"
+                                    type="text"
+                                    required
+                                    placeholder="John Doe"
+                                    value={formData.driver_name}
+                                    onChange={(e) => setFormData({ ...formData, driver_name: e.target.value })}
+                                    className="h-11"
+                                />
+                            </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Email</label>
-                        <input
-                            type="email"
-                            required
-                            className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
-                            placeholder="john@example.com"
-                            value={formData.email}
-                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        />
-                    </div>
+                            <div className="grid grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                    <Label htmlFor="email">Email</Label>
+                                    <Input
+                                        id="email"
+                                        type="email"
+                                        required
+                                        placeholder="john@example.com"
+                                        value={formData.email}
+                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                        className="h-11"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="phone">Phone</Label>
+                                    <Input
+                                        id="phone"
+                                        type="tel"
+                                        required
+                                        placeholder="+1 234 567 8900"
+                                        value={formData.phone}
+                                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                        className="h-11"
+                                    />
+                                </div>
+                            </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium">Phone</label>
-                        <input
-                            type="tel"
-                            required
-                            className="w-full rounded-lg border bg-background px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
-                            placeholder="+1 234 567 8900"
-                            value={formData.phone}
-                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        />
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full flex items-center justify-center gap-2 rounded-lg bg-primary py-3 font-bold text-white transition-all hover:bg-primary/90 mt-4 disabled:opacity-50"
-                    >
-                        {loading ? "Submitting..." : "Submit Request"} <Calendar className="h-4 w-4" />
-                    </button>
-                </form>
+                            <Button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full h-12 text-base font-bold bg-primary hover:bg-primary/90 mt-2"
+                            >
+                                {loading ? "Submitting..." : "Submit Request"} <Calendar className="ml-2 h-4 w-4" />
+                            </Button>
+                        </form>
+                    )}
+                </div>
             </div>
         </div>
     );

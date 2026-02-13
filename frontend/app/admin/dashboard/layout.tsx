@@ -13,6 +13,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     useEffect(() => {
         setMounted(true);
+    }, []);
+
+    useEffect(() => {
         const token = localStorage.getItem("admin_token");
         if (!token) {
             router.push("/admin/login");
@@ -29,12 +32,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     ];
 
     return (
-        <div className="flex min-h-screen bg-muted/40">
+        <div className="flex min-h-screen bg-neutral-50">
             {/* Sidebar */}
-            <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r bg-card shadow-sm">
+            <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r bg-white text-neutral-900 shadow-md">
                 <div className="flex h-16 items-center border-b px-6">
-                    <Link href="/" className="text-xl font-bold tracking-tighter">
-                        <span className="text-primary">RED</span>RENT
+                    <Link href="/" className="text-xl font-extrabold tracking-tighter">
+                        <span className="text-primary">MISTERS</span> DRIVERS
                     </Link>
                 </div>
 
@@ -44,8 +47,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                             key={item.href}
                             href={item.href}
                             className={cn(
-                                "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-muted",
-                                pathname === item.href ? "bg-primary/10 text-primary" : "text-muted-foreground"
+                                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all hover:bg-neutral-100",
+                                pathname === item.href
+                                    ? "bg-primary/10 text-primary hover:bg-primary/20"
+                                    : "text-muted-foreground hover:text-foreground"
                             )}
                         >
                             <item.icon className="h-4 w-4" />
@@ -69,7 +74,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </aside>
 
             {/* Main Content */}
-            <main className="ml-64 w-full p-8">
+            <main className="ml-64 w-full p-8 bg-neutral-50 min-h-screen">
                 {children}
             </main>
         </div>

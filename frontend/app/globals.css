@@ -2,76 +2,66 @@
 
 @layer base {
   :root {
-    /* Pure White Background */
     --background: 0 0% 100%;
-    /* Pure Black Text */
-    --foreground: 0 0% 0%;
+    --foreground: 222.2 84% 4.9%;
 
-    /* Light Gray Card Backgrounds for slight contrast */
-    --card: 0 0% 98%;
-    --card-foreground: 0 0% 0%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
+    --popover-foreground: 222.2 84% 4.9%;
 
-    /* Vivid Red Primary */
-    --primary: 0 100% 50%;
-    --primary-foreground: 0 0% 100%;
+    /* Premium Red */
+    --primary: 346 84% 61%;
+    --primary-foreground: 210 40% 98%;
 
-    /* Light Gray Secondary */
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 0%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 0 0% 96%;
-    --accent-foreground: 0 0% 0%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
 
-    /* Red Destructive */
-    --destructive: 0 100% 50%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 100% 50%;
-    /* Red focus ring */
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 346 84% 61%;
 
-    /* Sharper/Modern Radius */
     --radius: 0.5rem;
   }
 
   .dark {
-    /* Deep Black Background */
-    --background: 0 0% 5%;
-    /* Pure White Text */
-    --foreground: 0 0% 100%;
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
 
-    --card: 0 0% 8%;
-    --card-foreground: 0 0% 100%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 0 0% 5%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
 
-    /* Red Primary remains same */
-    --primary: 0 100% 50%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 346 84% 61%;
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 65%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 0 0% 15%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 100% 50%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 0 100% 50%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 346 84% 61%;
   }
 }
 
@@ -88,14 +78,21 @@
 
 @layer utilities {
   .glass {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgb(255 255 255 / 0.1);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    border: 1px solid rgb(255 255 255 / 0.2);
   }
 
   .glass-dark {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgb(0 0 0 / 0.1);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgb(255 255 255 / 0.1);
+  }
+
+  .glass-card {
+    background-color: hsl(var(--card) / 0.5);
+    backdrop-filter: blur(4px);
+    border: 1px solid hsl(var(--border) / 0.5);
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   }
 }

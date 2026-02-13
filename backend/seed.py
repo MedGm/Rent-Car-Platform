@@ -27,14 +27,14 @@ def seed_data():
                     "name": "Tesla Model 3",
                     "category": "Sedan",
                     "specs": {"seats": 5, "fuel": "Electric", "transmission": "Automatic"},
-                    "images": ["https://images.unsplash.com/photo-1536700503339-1e4b065207d3?auto=format&fit=crop&w=800&q=80"],
+                    "images": ["https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=800&q=80"],
                     "is_active": True
                 },
                 {
                     "name": "BMW X5",
                     "category": "SUV",
                     "specs": {"seats": 7, "fuel": "Diesel", "transmission": "Automatic"},
-                    "images": ["https://images.unsplash.com/photo-1555215695-3004980adade?auto=format&fit=crop&w=800&q=80"],
+                    "images": ["https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80"], 
                     "is_active": True
                 },
                 {

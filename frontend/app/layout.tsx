@@ -8,7 +8,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Car Rental Platform",
+  title: "Misters Drivers",
   description: "Premium Car Rental Experience",
 };
 

@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Plus, Trash, Edit } from "lucide-react";
 
 interface Car {
     id: number;
     name: string;
     category: string;
+    images?: string[];
     is_active: boolean;
 }
 
@@ -21,7 +23,7 @@ export default function AdminFleetPage() {
                 if (res.ok) {
                     setCars(await res.json());
                 }
-            } catch (error) {
+            } catch {
                 console.error("Failed to fetch cars");
             } finally {
                 setLoading(false);
@@ -42,7 +44,7 @@ export default function AdminFleetPage() {
             if (res.ok) {
                 setCars(cars.filter(c => c.id !== id));
             }
-        } catch (err) {
+        } catch {
             alert("Failed to delete car");
         }
     }
@@ -50,33 +52,59 @@ export default function AdminFleetPage() {
     if (loading) return <div>Loading fleet...</div>;
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-8">
             <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold tracking-tight">Fleet Management</h1>
-                <button className="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 font-bold text-white hover:bg-primary/90">
-                    <Plus className="h-4 w-4" /> Add Car
-                </button>
+                <div>
+                    <h1 className="text-3xl font-extrabold tracking-tight text-neutral-900">Fleet Management</h1>
+                    <p className="text-muted-foreground mt-1">Manage your vehicle inventory and pricing.</p>
+                </div>
+                <Link href="/admin/dashboard/fleet/add" className="flex items-center gap-2 rounded-lg bg-neutral-900 px-5 py-2.5 font-bold text-white shadow-lg transition-all hover:bg-neutral-800 hover:scale-105 active:scale-95">
+                    <Plus className="h-4 w-4" /> Add Vehicle
+                </Link>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {cars.map((car) => (
-                    <div key={car.id} className="relative overflow-hidden rounded-xl border bg-card p-4 shadow-sm">
-                        <div className="flex items-center justify-between mb-4">
-                            <span className="rounded-full bg-secondary px-2 py-1 text-xs font-bold uppercase">{car.category}</span>
-                            <span className={`h-2 w-2 rounded-full ${car.is_active ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                    <div key={car.id} className="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all hover:shadow-xl">
+                        {/* Image Area */}
+                        <div className="relative h-48 w-full bg-gray-100">
+                            {car.images && car.images.length > 0 ? (
+                                <img
+                                    src={car.images[0] || "/placeholder-car.jpg"}
+                                    alt={car.name}
+                                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                />
+                            ) : (
+                                <div className="flex h-full items-center justify-center text-gray-400">
+                                    <span className="text-sm">No Image</span>
+                                </div>
+                            )}
+                            <div className="absolute top-3 right-3">
+                                <span className={`flex h-2 w-2 rounded-full ${car.is_active ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]' : 'bg-red-500'}`}></span>
+                            </div>
+                            <div className="absolute bottom-3 left-3">
+                                <span className="rounded-md bg-black/60 backdrop-blur-md px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
+                                    {car.category}
+                                </span>
+                            </div>
                         </div>
-                        <h3 className="text-lg font-bold">{car.name}</h3>
 
-                        <div className="mt-4 flex gap-2">
-                            <button className="flex-1 rounded border border-input bg-background px-3 py-1 text-sm font-medium hover:bg-muted">
-                                Edit
-                            </button>
-                            <button
-                                onClick={() => deleteCar(car.id)}
-                                className="flex-1 rounded border border-destructive/20 bg-destructive/10 px-3 py-1 text-sm font-medium text-destructive hover:bg-destructive/20"
-                            >
-                                Delete
-                            </button>
+                        {/* Content Area */}
+                        <div className="p-5">
+                            <h3 className="text-lg font-bold text-gray-900">{car.name}</h3>
+
+                            <div className="mt-4 flex items-center gap-2">
+                                <Link href={`/admin/dashboard/fleet/edit/${car.id}`} className="flex-1 flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-gray-900">
+                                    <Edit className="h-3.5 w-3.5" /> Edit
+                                </Link>
+                                <button
+                                    onClick={() => deleteCar(car.id)}
+                                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-red-100 bg-red-50 text-red-600 transition-colors hover:bg-red-100 hover:border-red-200"
+                                    title="Delete Car"
+                                >
+                                    <Trash className="h-4 w-4" />
+                                </button>
+                            </div>
                         </div>
                     </div>
                 ))}

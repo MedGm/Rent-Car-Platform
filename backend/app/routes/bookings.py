@@ -6,7 +6,7 @@ from datetime import datetime, date
 
 bookings_bp = Blueprint('bookings', __name__)
 
-@bookings_bp.route('/', methods=['POST'])
+@bookings_bp.route('', methods=['POST'])
 def create_booking_request():
     data = request.get_json()
     
@@ -34,7 +34,7 @@ def create_booking_request():
     
     return jsonify({'message': 'Booking request submitted', 'id': new_booking.id}), 201
 
-@bookings_bp.route('/', methods=['GET'])
+@bookings_bp.route('', methods=['GET'])
 @admin_required
 def get_bookings():
     bookings = Booking.query.order_by(Booking.created_at.desc()).all()
