@@ -4,35 +4,34 @@ import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface Booking {
-    id: number;
-    start_date: string;
-    end_date: string;
-    status: string;
+interface UnavailableRange {
+    start: string;
+    end: string;
+    type: string;
 }
 
 export function AvailabilityCalendar({ carId }: { carId: number }) {
     const [currentDate, setCurrentDate] = useState(new Date());
-    const [bookings, setBookings] = useState<Booking[]>([]);
+    const [unavailableRanges, setUnavailableRanges] = useState<UnavailableRange[]>([]);
     const [loading, setLoading] = useState(true);
 
-    // Fetch bookings for the current month/car
+    // Fetch availability (confirmed bookings + maintenance blocks) for this car
     useEffect(() => {
         let isMounted = true;
-        async function fetchBookings() {
+        async function fetchAvailability() {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/bookings?car_id=${carId}`);
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/bookings/availability/${carId}`);
                 if (res.ok && isMounted) {
                     const data = await res.json();
-                    setBookings(data);
+                    setUnavailableRanges(data);
                 }
             } catch (error) {
-                console.error("Failed to fetch bookings", error);
+                console.error("Failed to fetch availability", error);
             } finally {
                 if (isMounted) setLoading(false);
             }
         }
-        fetchBookings();
+        fetchAvailability();
         return () => { isMounted = false; };
     }, [carId]);
 
@@ -61,14 +60,12 @@ export function AvailabilityCalendar({ carId }: { carId: number }) {
 
     const isDateBooked = (day: number) => {
         const checkDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-        return bookings.some((b) => {
-            if (b.status === 'cancelled') return false;
-            const start = new Date(b.start_date);
-            const end = new Date(b.end_date);
-            // Reset times to avoid timezone issues for simple comparison
+        checkDate.setHours(0, 0, 0, 0);
+        return unavailableRanges.some((range) => {
+            const start = new Date(range.start);
+            const end = new Date(range.end);
             start.setHours(0, 0, 0, 0);
             end.setHours(0, 0, 0, 0);
-            checkDate.setHours(0, 0, 0, 0);
             return checkDate >= start && checkDate <= end;
         });
     };

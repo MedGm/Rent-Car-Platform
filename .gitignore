@@ -7,6 +7,9 @@ __pycache__/
 # Environment variables
 .env
 
+# Uploads
+backend/app/static/uploads/
+
 # Next.js
 .next/
 out/

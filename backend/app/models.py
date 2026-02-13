@@ -40,6 +40,7 @@ class Booking(db.Model):
     customer_name = db.Column(db.String(100), nullable=True)
     customer_email = db.Column(db.String(120), nullable=True)
     customer_phone = db.Column(db.String(20), nullable=True)
+    customer_details = db.Column(JSONB, nullable=True)  # Extra contract fields
 
     contract = db.relationship('Contract', backref='booking', uselist=False)
 

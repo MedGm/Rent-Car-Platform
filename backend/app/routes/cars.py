@@ -4,7 +4,7 @@ from app.auth import admin_required
 
 cars_bp = Blueprint('cars', __name__)
 
-@cars_bp.route('/', methods=['GET'])
+@cars_bp.route('', methods=['GET'])
 def get_cars():
     # Public endpoint to list active cars
     cars = Car.query.filter_by(is_active=True).all()
@@ -33,7 +33,7 @@ def get_car(id):
         'is_active': car.is_active
     })
 
-@cars_bp.route('/', methods=['POST'])
+@cars_bp.route('', methods=['POST'])
 @admin_required
 def create_car():
     try:

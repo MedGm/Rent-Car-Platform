@@ -19,15 +19,45 @@ def create_booking_request():
     if start_date >= end_date:
         return jsonify({'message': 'End date must be after start date'}), 400
 
+    # Block booking if dates overlap with a confirmed booking or maintenance block
+    conflict = Booking.query.filter(
+        Booking.car_id == data['car_id'],
+        Booking.status == 'confirmed',
+        Booking.start_date < end_date,
+        Booking.end_date > start_date
+    ).first()
+
+    maintenance = CalendarBlock.query.filter(
+        CalendarBlock.car_id == data['car_id'],
+        CalendarBlock.start_date < end_date,
+        CalendarBlock.end_date > start_date
+    ).first()
+
+    if conflict or maintenance:
+        return jsonify({'message': 'This car is not available for the selected dates. Please choose different dates.'}), 409
+
     new_booking = Booking(
         car_id=data['car_id'],
-        # user_id will be linked when we have user auth for customers, or null for guests
-        # For now, we assume public requests don't require login, stored as pending
         start_date=start_date,
         end_date=end_date,
-        status='pending'
+        status='pending',
+        customer_name=data.get('driver_name', data.get('customer_name', '')),
+        customer_email=data.get('email', data.get('customer_email', '')),
+        customer_phone=data.get('phone', data.get('customer_phone', '')),
+        customer_details={
+            'address_morocco': data.get('address_morocco', ''),
+            'address_abroad': data.get('address_abroad', ''),
+            'license_number': data.get('license_number', ''),
+            'license_issued_at': data.get('license_issued_at', ''),
+            'passport': data.get('passport', ''),
+            'cin': data.get('cin', ''),
+            'cin_valid_until': data.get('cin_valid_until', ''),
+            'birth_date': data.get('birth_date', ''),
+            'nationality': data.get('nationality', ''),
+            'delivery_location': data.get('delivery_location', ''),
+            'return_location': data.get('return_location', ''),
+        },
     )
-    # In a real app, we'd store customer details too if not logged in
     
     db.session.add(new_booking)
     db.session.commit()
@@ -42,11 +72,17 @@ def get_bookings():
     for b in bookings:
         result.append({
             'id': b.id,
+            'car_id': b.car_id,
             'car_name': b.car.name,
+            'customer_name': b.customer_name or 'N/A',
+            'customer_email': b.customer_email or '',
+            'customer_phone': b.customer_phone or '',
             'start_date': b.start_date.isoformat(),
             'end_date': b.end_date.isoformat(),
             'status': b.status,
-            'created_at': b.created_at.isoformat()
+            'created_at': b.created_at.isoformat(),
+            'has_contract': b.contract is not None,
+            'contract_id': b.contract.id if b.contract else None,
         })
     return jsonify(result)
 

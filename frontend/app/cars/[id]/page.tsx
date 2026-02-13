@@ -1,10 +1,29 @@
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { Navbar } from "@/components/Navbar";
 import { AvailabilityCalendar } from "@/components/AvailabilityCalendar";
 import ClientBookingWrapper from "@/components/ClientBookingWrapper";
-import { ArrowLeft, Check, MessageCircle, Shield } from "lucide-react";
+import { ImageCarousel } from "@/components/ImageCarousel";
+import {
+    ArrowLeft,
+    MessageCircle,
+    Shield,
+    Bluetooth,
+    Navigation,
+    Armchair,
+    Radar,
+    Gauge,
+    Smartphone,
+} from "lucide-react";
+
+const FEATURES = [
+    { name: "Bluetooth Audio", icon: Bluetooth, color: "text-blue-600", bg: "bg-blue-100" },
+    { name: "Navigation System", icon: Navigation, color: "text-emerald-600", bg: "bg-emerald-100" },
+    { name: "Leather Seats", icon: Armchair, color: "text-amber-600", bg: "bg-amber-100" },
+    { name: "Parking Sensors", icon: Radar, color: "text-violet-600", bg: "bg-violet-100" },
+    { name: "Cruise Control", icon: Gauge, color: "text-rose-600", bg: "bg-rose-100" },
+    { name: "Apple CarPlay", icon: Smartphone, color: "text-sky-600", bg: "bg-sky-100" },
+];
 
 async function getCar(id: string) {
     try {
@@ -51,34 +70,27 @@ export default async function CarDetailsPage({ params }: { params: Promise<{ id:
         <main className="min-h-screen bg-background pb-20">
             <Navbar />
 
-            <div className="relative h-[50vh] w-full bg-muted">
-                {car.images[0] && (
-                    <Image
-                        src={car.images[0]}
-                        alt={car.name}
-                        fill
-                        className="object-cover"
-                        priority
-                    />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
+            {/* Top bar with back link */}
+            <div className="container mx-auto px-4 pt-6">
+                <Link href="/cars" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                    <ArrowLeft className="mr-2 h-4 w-4" /> Back to Fleet
+                </Link>
+            </div>
 
-                <div className="absolute bottom-0 left-0 p-6 md:p-12 container mx-auto">
-                    <Link href="/cars" className="inline-flex items-center text-sm font-medium text-white/80 hover:text-white mb-4 transition-colors">
-                        <ArrowLeft className="mr-2 h-4 w-4" /> Back to Fleet
-                    </Link>
+            <div className="container mx-auto px-4 mt-6 grid gap-10 lg:grid-cols-3">
+                {/* Main Content */}
+                <div className="lg:col-span-2 space-y-10">
+
+                    {/* Car title + category */}
                     <div className="flex items-center gap-4">
-                        <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl">{car.name}</h1>
-                        <div className="rounded-full bg-primary px-3 py-1 text-xs font-bold uppercase tracking-wider text-white">
+                        <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{car.name}</h1>
+                        <div className="rounded-full bg-primary px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary-foreground">
                             {car.category}
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <div className="container mx-auto mt-8 grid gap-12 lg:grid-cols-3">
-                {/* Main Content */}
-                <div className="lg:col-span-2 space-y-12">
+                    {/* Image Carousel (square) */}
+                    <ImageCarousel images={car.images} alt={car.name} />
 
                     {/* Specs */}
                     <section>
@@ -93,19 +105,22 @@ export default async function CarDetailsPage({ params }: { params: Promise<{ id:
                         </div>
                     </section>
 
-                    {/* Description / Features */}
+                    {/* Key Features with unique icons */}
                     <section>
                         <h2 className="text-2xl font-bold mb-6">Key Features</h2>
-                        <ul className="grid gap-2 sm:grid-cols-2">
-                            {["Bluetooth Audio", "Navigation System", "Leather Seats", "Parking Sensors", "Cruise Control", "Apple CarPlay"].map((feat) => (
-                                <li key={feat} className="flex items-center gap-2">
-                                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/20">
-                                        <Check className="h-3 w-3 text-primary" />
+                        <div className="grid gap-3 sm:grid-cols-2">
+                            {FEATURES.map((feat) => {
+                                const Icon = feat.icon;
+                                return (
+                                    <div key={feat.name} className="flex items-center gap-3 rounded-xl border bg-card p-4 transition-colors hover:border-primary/30">
+                                        <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${feat.bg}`}>
+                                            <Icon className={`h-5 w-5 ${feat.color}`} />
+                                        </div>
+                                        <span className="font-medium">{feat.name}</span>
                                     </div>
-                                    <span>{feat}</span>
-                                </li>
-                            ))}
-                        </ul>
+                                );
+                            })}
+                        </div>
                     </section>
                 </div>
 
