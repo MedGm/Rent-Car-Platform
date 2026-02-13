@@ -21,11 +21,15 @@ def create_app(config_class=Config):
     from app.routes.cars import cars_bp
     from app.routes.bookings import bookings_bp
     from app.routes.contracts import contracts_bp
+    from app.routes.articles import articles_bp
+    from app.routes.services import services_bp
 
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(cars_bp, url_prefix='/api/cars')
     app.register_blueprint(bookings_bp, url_prefix='/api/bookings')
     app.register_blueprint(contracts_bp, url_prefix='/api/contracts')
+    app.register_blueprint(articles_bp, url_prefix='/api/articles')
+    app.register_blueprint(services_bp, url_prefix='/api/services')
 
     # Serve static files (uploads) in development
     import os

@@ -63,3 +63,25 @@ class Contract(db.Model):
     pdf_path = db.Column(db.String(255))
     invoice_data = db.Column(JSONB)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Article(db.Model):
+    __tablename__ = 'articles'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    excerpt = db.Column(db.String(500))
+    content = db.Column(db.Text)
+    category = db.Column(db.String(50))
+    image_url = db.Column(db.String(500))
+    is_published = db.Column(db.Boolean, default=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class Service(db.Model):
+    __tablename__ = 'services'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text)
+    icon = db.Column(db.String(50), default='Shield')  # lucide icon name
+    is_active = db.Column(db.Boolean, default=True)
+    sort_order = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)

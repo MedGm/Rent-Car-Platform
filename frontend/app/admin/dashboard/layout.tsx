@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { LayoutDashboard, Car, Calendar, FileText, LogOut } from "lucide-react";
+import { LayoutDashboard, Car, Calendar, FileText, LogOut, Newspaper, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -29,6 +29,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { name: "Fleet", href: "/admin/dashboard/fleet", icon: Car },
         { name: "Bookings", href: "/admin/dashboard/bookings", icon: Calendar },
         { name: "Contracts", href: "/admin/dashboard/contracts", icon: FileText },
+        { name: "Articles", href: "/admin/dashboard/articles", icon: Newspaper },
+        { name: "Services", href: "/admin/dashboard/services", icon: Settings },
     ];
 
     return (
