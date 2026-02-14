@@ -21,6 +21,7 @@ class Car(db.Model):
     category = db.Column(db.String(50))
     specs = db.Column(JSONB)  # Requires PostgreSQL
     images = db.Column(JSONB) # List of image URLs
+    brand_logo = db.Column(db.String(500))  # Brand logo image URL
     is_active = db.Column(db.Boolean, default=True)
 
     bookings = db.relationship('Booking', backref='car', lazy='dynamic')

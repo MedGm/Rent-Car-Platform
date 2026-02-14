@@ -14,7 +14,16 @@ import {
     Radar,
     Gauge,
     Smartphone,
+    Users,
+    Fuel,
+    Cog,
 } from "lucide-react";
+
+const SPEC_ICONS: Record<string, any> = {
+    seats: Users,
+    fuel: Fuel,
+    transmission: Cog,
+};
 
 const FEATURES = [
     { name: "Bluetooth Audio", icon: Bluetooth, color: "text-blue-600", bg: "bg-blue-100" },
@@ -83,6 +92,9 @@ export default async function CarDetailsPage({ params }: { params: Promise<{ id:
 
                     {/* Car title + category */}
                     <div className="flex items-center gap-4">
+                        {car.brand_logo && (
+                            <img src={car.brand_logo} alt="brand" className="h-10 w-10 object-contain" />
+                        )}
                         <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{car.name}</h1>
                         <div className="rounded-full bg-primary px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary-foreground">
                             {car.category}
@@ -96,12 +108,18 @@ export default async function CarDetailsPage({ params }: { params: Promise<{ id:
                     <section>
                         <h2 className="text-2xl font-bold mb-6">Vehicle Specifications</h2>
                         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-                            {Object.entries(car.specs).map(([key, value]) => (
-                                <div key={key} className="rounded-xl border bg-card p-4">
-                                    <div className="text-xs font-medium uppercase text-muted-foreground">{key}</div>
-                                    <div className="mt-1 text-lg font-bold capitalize">{String(value)}</div>
-                                </div>
-                            ))}
+                            {Object.entries(car.specs).map(([key, value]) => {
+                                const SpecIcon = SPEC_ICONS[key.toLowerCase()];
+                                return (
+                                    <div key={key} className="rounded-xl border bg-card p-4">
+                                        <div className="flex items-center gap-2">
+                                            {SpecIcon && <SpecIcon className="h-4 w-4 text-red-500" />}
+                                            <div className="text-xs font-medium uppercase text-muted-foreground">{key}</div>
+                                        </div>
+                                        <div className="mt-1 text-lg font-bold capitalize">{String(value)}</div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </section>
 

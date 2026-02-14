@@ -32,6 +32,8 @@ export function CarForm({ initialData, isEdit = false }: CarFormProps) {
     });
 
     const [files, setFiles] = useState<File[]>([]);
+    const [brandLogoFile, setBrandLogoFile] = useState<File | null>(null);
+    const [brandLogoPreview, setBrandLogoPreview] = useState<string>("");
 
     useEffect(() => {
         if (initialData) {
@@ -46,6 +48,9 @@ export function CarForm({ initialData, isEdit = false }: CarFormProps) {
                 images: initialData.images || [],
                 is_active: initialData.is_active ?? true
             });
+            if (initialData.brand_logo) {
+                setBrandLogoPreview(initialData.brand_logo);
+            }
         }
     }, [initialData]);
 
@@ -88,6 +93,13 @@ export function CarForm({ initialData, isEdit = false }: CarFormProps) {
         files.forEach(file => {
             data.append("images", file);
         });
+
+        // Append brand logo
+        if (brandLogoFile) {
+            data.append("brand_logo", brandLogoFile);
+        } else if (!brandLogoPreview && isEdit) {
+            data.append("remove_brand_logo", "true");
+        }
 
         try {
             const res = await fetch(url, {
@@ -234,6 +246,53 @@ export function CarForm({ initialData, isEdit = false }: CarFormProps) {
                 </div>
 
                 <div className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Brand Logo</CardTitle>
+                            <CardDescription>Upload the car manufacturer logo.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            {brandLogoPreview ? (
+                                <div className="relative flex items-center justify-center rounded-xl border-2 border-dashed p-6 bg-gray-50">
+                                    <img
+                                        src={brandLogoPreview}
+                                        alt="Brand logo"
+                                        className="h-20 w-20 object-contain"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setBrandLogoFile(null);
+                                            setBrandLogoPreview("");
+                                        }}
+                                        className="absolute top-2 right-2 h-6 w-6 rounded-full bg-red-500 text-white flex items-center justify-center text-xs hover:bg-red-600"
+                                    >
+                                        ×
+                                    </button>
+                                </div>
+                            ) : (
+                                <label className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 cursor-pointer hover:bg-gray-50 transition-colors">
+                                    <div className="text-center">
+                                        <p className="text-sm text-muted-foreground">Click to upload logo</p>
+                                        <p className="text-xs text-muted-foreground mt-1">PNG, SVG, or JPG</p>
+                                    </div>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (file) {
+                                                setBrandLogoFile(file);
+                                                setBrandLogoPreview(URL.createObjectURL(file));
+                                            }
+                                        }}
+                                    />
+                                </label>
+                            )}
+                        </CardContent>
+                    </Card>
+
                     <Card className="h-full">
                         <CardHeader>
                             <CardTitle>Media Gallery</CardTitle>

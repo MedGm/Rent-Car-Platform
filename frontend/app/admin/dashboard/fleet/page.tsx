@@ -9,6 +9,7 @@ interface Car {
     name: string;
     category: string;
     images?: string[];
+    brand_logo?: string;
     is_active: boolean;
 }
 
@@ -91,7 +92,12 @@ export default function AdminFleetPage() {
 
                         {/* Content Area */}
                         <div className="p-5">
-                            <h3 className="text-lg font-bold text-gray-900">{car.name}</h3>
+                            <div className="flex items-center gap-2">
+                                {car.brand_logo && (
+                                    <img src={car.brand_logo} alt="brand" className="h-6 w-6 object-contain" />
+                                )}
+                                <h3 className="text-lg font-bold text-gray-900">{car.name}</h3>
+                            </div>
 
                             <div className="mt-4 flex items-center gap-2">
                                 <Link href={`/admin/dashboard/fleet/edit/${car.id}`} className="flex-1 flex items-center justify-center gap-2 rounded-lg border border-gray-200 bg-white py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-gray-900">

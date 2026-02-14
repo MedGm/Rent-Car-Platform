@@ -1,4 +1,8 @@
-from flask import Blueprint, request, jsonify
+import os
+import json
+import time
+from flask import Blueprint, request, jsonify, current_app
+from werkzeug.utils import secure_filename
 from app.models import Car, db
 from app.auth import admin_required
 
@@ -16,6 +20,7 @@ def get_cars():
             'category': car.category,
             'specs': car.specs,
             'images': car.images,
+            'brand_logo': car.brand_logo,
             'is_active': car.is_active
         })
     return jsonify(result)
@@ -30,6 +35,7 @@ def get_car(id):
         'category': car.category,
         'specs': car.specs,
         'images': car.images,
+        'brand_logo': car.brand_logo,
         'is_active': car.is_active
     })
 
@@ -42,29 +48,30 @@ def create_car():
         
         image_urls = []
         if files:
-            import os
-            from werkzeug.utils import secure_filename
-            from flask import current_app
-            
             upload_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], 'cars')
             os.makedirs(upload_dir, exist_ok=True)
             
             for file in files:
                 if file and file.filename:
                     filename = secure_filename(file.filename)
-                    # Add timestamp to filename to prevent collisions
-                    import time
                     timestamp = int(time.time())
                     filename = f"{timestamp}_{filename}"
                     
                     file.save(os.path.join(upload_dir, filename))
-                    # Store relative URL for frontend to access (proxied via backend in dev)
-                    # In prod, this would be a full URL or CDN path
-                    # Since we set up static serving at /static/uploads, we construct the URL accordingly
                     image_urls.append(f"{request.host_url}static/uploads/cars/{filename}")
 
+        # Handle brand logo upload
+        brand_logo_url = ''
+        brand_logo_file = request.files.get('brand_logo')
+        if brand_logo_file and brand_logo_file.filename:
+            logo_filename = secure_filename(brand_logo_file.filename)
+            logo_filename = f"{int(time.time())}_{logo_filename}"
+            logo_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], 'cars')
+            os.makedirs(logo_dir, exist_ok=True)
+            brand_logo_file.save(os.path.join(logo_dir, logo_filename))
+            brand_logo_url = f"{request.host_url}static/uploads/cars/{logo_filename}"
+
         # Specs come as stringified JSON in formData
-        import json
         specs = json.loads(data.get('specs', '{}'))
         
         new_car = Car(
@@ -72,6 +79,7 @@ def create_car():
             category=data.get('category'),
             specs=specs,
             images=image_urls,
+            brand_logo=brand_logo_url or None,
             is_active=data.get('is_active') == 'true'
         )
         db.session.add(new_car)
@@ -101,17 +109,12 @@ def update_car(id):
             # Handle new image uploads
             new_image_urls = []
             if files:
-                import os
-                from werkzeug.utils import secure_filename
-                from flask import current_app
-                
                 upload_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], 'cars')
                 os.makedirs(upload_dir, exist_ok=True)
                 
                 for file in files:
                     if file and file.filename:
                         filename = secure_filename(file.filename)
-                        import time
                         timestamp = int(time.time())
                         filename = f"{timestamp}_{filename}"
                         file.save(os.path.join(upload_dir, filename))
@@ -120,7 +123,6 @@ def update_car(id):
             car.name = data.get('name', car.name)
             car.category = data.get('category', car.category)
             
-            import json
             if 'specs' in data:
                 car.specs = json.loads(data['specs'])
                 
@@ -164,6 +166,18 @@ def update_car(id):
             # Only update images if we actually processed some image logic (either files or existing_images key present)
             if files or 'existing_images' in data:
                 car.images = final_images
+
+            # Handle brand logo upload
+            brand_logo_file = request.files.get('brand_logo')
+            if brand_logo_file and brand_logo_file.filename:
+                logo_filename = secure_filename(brand_logo_file.filename)
+                logo_filename = f"{int(time.time())}_{logo_filename}"
+                logo_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], 'cars')
+                os.makedirs(logo_dir, exist_ok=True)
+                brand_logo_file.save(os.path.join(logo_dir, logo_filename))
+                car.brand_logo = f"{request.host_url}static/uploads/cars/{logo_filename}"
+            elif data.get('remove_brand_logo') == 'true':
+                car.brand_logo = None
 
         db.session.commit()
         return jsonify({'message': 'Car updated successfully'})

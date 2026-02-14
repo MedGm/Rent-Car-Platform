@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Car } from "lucide-react";
+import { Car, Users, Fuel, Cog } from "lucide-react";
 
 interface CarProps {
     id: number;
@@ -14,6 +14,7 @@ interface CarProps {
         fuel?: string;
     };
     images: string[];
+    brand_logo?: string;
     is_active: boolean;
 }
 
@@ -40,16 +41,28 @@ export function CarCard({ car }: { car: CarProps }) {
             </div>
 
             <div className="p-5">
-                <h3 className="text-xl font-bold">{car.name}</h3>
+                <div className="flex items-center gap-3">
+                    {car.brand_logo && (
+                        <img
+                            src={car.brand_logo}
+                            alt="brand"
+                            className="h-8 w-8 object-contain"
+                        />
+                    )}
+                    <h3 className="text-xl font-bold">{car.name}</h3>
+                </div>
 
                 <div className="mt-4 grid grid-cols-2 gap-2 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
+                        <Users className="h-4 w-4 text-red-500" />
                         <span className="font-semibold text-foreground">Seats:</span> {car.specs.seats || "-"}
                     </div>
                     <div className="flex items-center gap-2">
+                        <Fuel className="h-4 w-4 text-red-500" />
                         <span className="font-semibold text-foreground">Fuel:</span> {car.specs.fuel || "-"}
                     </div>
                     <div className="flex items-center gap-2">
+                        <Cog className="h-4 w-4 text-red-500" />
                         <span className="font-semibold text-foreground">Trans:</span> {car.specs.transmission || "-"}
                     </div>
                 </div>

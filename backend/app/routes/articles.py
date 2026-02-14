@@ -34,6 +34,23 @@ def get_articles():
     } for a in articles])
 
 
+@articles_bp.route('/<int:article_id>', methods=['GET'])
+def get_article(article_id):
+    """Public: get a single published article by ID."""
+    article = Article.query.get_or_404(article_id)
+    if not article.is_published:
+        return jsonify({'error': 'Article not found'}), 404
+    return jsonify({
+        'id': article.id,
+        'title': article.title,
+        'excerpt': article.excerpt,
+        'content': article.content,
+        'category': article.category,
+        'image_url': article.image_url,
+        'created_at': article.created_at.strftime('%b %d, %Y') if article.created_at else None,
+    })
+
+
 @articles_bp.route('/all', methods=['GET'])
 @admin_required
 def get_all_articles():
