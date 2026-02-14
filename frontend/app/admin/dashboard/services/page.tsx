@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, GripVertical } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Save, Loader2 } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
@@ -21,16 +21,17 @@ interface ServiceItem {
     sort_order: number;
 }
 
-function IconPreview({ name }: { name: string }) {
+function IconPreview({ name, className }: { name: string; className?: string }) {
     const Icon = (LucideIcons as any)[name];
     if (!Icon) return <span className="text-xs text-gray-400">?</span>;
-    return <Icon className="h-5 w-5" />;
+    return <Icon className={className || "h-5 w-5"} />;
 }
 
 export default function ServicesAdmin() {
     const [services, setServices] = useState<ServiceItem[]>([]);
     const [showForm, setShowForm] = useState(false);
     const [editing, setEditing] = useState<ServiceItem | null>(null);
+    const [loading, setLoading] = useState(false);
     const [form, setForm] = useState({
         title: "", description: "", icon: "Shield", is_active: true, sort_order: 0
     });
@@ -54,21 +55,26 @@ export default function ServicesAdmin() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setLoading(true);
         const url = editing ? `${API}/services/${editing.id}` : `${API}/services`;
         const method = editing ? "PUT" : "POST";
 
-        const res = await fetch(url, {
-            method,
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(form),
-        });
+        try {
+            const res = await fetch(url, {
+                method,
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(form),
+            });
 
-        if (res.ok) {
-            fetchServices();
-            resetForm();
+            if (res.ok) {
+                fetchServices();
+                resetForm();
+            }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -97,87 +103,128 @@ export default function ServicesAdmin() {
         <div>
             <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h1 className="text-2xl font-bold">Services</h1>
-                    <p className="text-muted-foreground">Manage the services displayed on the homepage</p>
+                    <h1 className="text-3xl font-extrabold tracking-tight text-neutral-900">Services</h1>
+                    <p className="text-muted-foreground mt-1">Manage the services displayed on the homepage</p>
                 </div>
                 <button
                     onClick={() => { resetForm(); setShowForm(true); }}
-                    className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/90"
+                    className="flex items-center gap-2 rounded-lg bg-neutral-900 px-5 py-2.5 font-bold text-white shadow-lg transition-all hover:bg-neutral-800 hover:scale-105 active:scale-95"
                 >
                     <Plus className="h-4 w-4" /> New Service
                 </button>
             </div>
 
-            {/* Form Modal */}
+            {/* Form Modal - CarForm Style */}
             {showForm && (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-xl w-full max-w-lg p-6">
-                        <h2 className="text-xl font-bold mb-6">{editing ? "Edit Service" : "New Service"}</h2>
-                        <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
+                        {/* Header */}
+                        <div className="flex items-center justify-between border-b px-6 py-4">
                             <div>
-                                <label className="block text-sm font-medium mb-1">Title *</label>
-                                <input
-                                    required
-                                    className="w-full border rounded-lg px-3 py-2 text-sm"
-                                    value={form.title}
-                                    onChange={e => setForm({ ...form, title: e.target.value })}
-                                />
+                                <h2 className="text-xl font-bold tracking-tight">{editing ? "Edit Service" : "New Service"}</h2>
+                                <p className="text-sm text-muted-foreground">{editing ? "Update service details." : "Add a new service to your homepage."}</p>
                             </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Description</label>
-                                <textarea
-                                    className="w-full border rounded-lg px-3 py-2 text-sm"
-                                    rows={3}
-                                    value={form.description}
-                                    onChange={e => setForm({ ...form, description: e.target.value })}
-                                />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium mb-1">Icon</label>
-                                <div className="grid grid-cols-6 gap-2 mt-1">
-                                    {ICON_OPTIONS.map(iconName => (
-                                        <button
-                                            key={iconName}
-                                            type="button"
-                                            onClick={() => setForm({ ...form, icon: iconName })}
-                                            className={`flex flex-col items-center gap-1 p-2 rounded-lg border text-xs transition-colors ${
-                                                form.icon === iconName
-                                                    ? "border-primary bg-primary/10 text-primary"
-                                                    : "border-gray-200 hover:border-gray-300"
-                                            }`}
-                                        >
-                                            <IconPreview name={iconName} />
-                                            <span className="truncate w-full text-center" style={{ fontSize: "9px" }}>{iconName}</span>
-                                        </button>
-                                    ))}
+                            <button onClick={resetForm} className="rounded-full p-2 hover:bg-neutral-100 transition-colors">
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+                            {/* Service Details Card */}
+                            <div className="rounded-xl border bg-white shadow-sm">
+                                <div className="border-b px-4 py-3">
+                                    <h3 className="font-semibold text-sm">Service Details</h3>
+                                    <p className="text-xs text-muted-foreground">Basic information about the service.</p>
+                                </div>
+                                <div className="p-4 space-y-4">
+                                    <div className="space-y-1.5">
+                                        <label className="text-sm font-medium">Title *</label>
+                                        <input
+                                            required
+                                            className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                            value={form.title}
+                                            onChange={e => setForm({ ...form, title: e.target.value })}
+                                            placeholder="e.g. Airport Transfer"
+                                        />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label className="text-sm font-medium">Description</label>
+                                        <textarea
+                                            className="flex w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                            rows={3}
+                                            value={form.description}
+                                            onChange={e => setForm({ ...form, description: e.target.value })}
+                                            placeholder="Describe the service..."
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-1.5">
+                                            <label className="text-sm font-medium">Sort Order</label>
+                                            <input
+                                                type="number"
+                                                className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                                value={form.sort_order}
+                                                onChange={e => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })}
+                                            />
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <label className="text-sm font-medium">Status</label>
+                                            <div className="flex h-10 items-center justify-between rounded-lg border px-3 py-2">
+                                                <span className="text-sm text-muted-foreground">Active</span>
+                                                <button
+                                                    type="button"
+                                                    role="switch"
+                                                    aria-checked={form.is_active}
+                                                    onClick={() => setForm({ ...form, is_active: !form.is_active })}
+                                                    className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${form.is_active ? 'bg-neutral-900' : 'bg-neutral-200'}`}
+                                                >
+                                                    <span className={`pointer-events-none block h-4 w-4 rounded-full bg-white shadow-lg transition-transform ${form.is_active ? 'translate-x-4' : 'translate-x-0'}`} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="flex gap-4">
-                                <div className="flex-1">
-                                    <label className="block text-sm font-medium mb-1">Sort Order</label>
-                                    <input
-                                        type="number"
-                                        className="w-full border rounded-lg px-3 py-2 text-sm"
-                                        value={form.sort_order}
-                                        onChange={e => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })}
-                                    />
+
+                            {/* Icon Picker Card */}
+                            <div className="rounded-xl border bg-white shadow-sm">
+                                <div className="border-b px-4 py-3">
+                                    <h3 className="font-semibold text-sm">Icon</h3>
+                                    <p className="text-xs text-muted-foreground">Choose an icon to represent this service.</p>
                                 </div>
-                                <div className="flex items-end gap-2 pb-1">
-                                    <input
-                                        type="checkbox"
-                                        id="active"
-                                        checked={form.is_active}
-                                        onChange={e => setForm({ ...form, is_active: e.target.checked })}
-                                    />
-                                    <label htmlFor="active" className="text-sm">Active</label>
+                                <div className="p-4">
+                                    <div className="grid grid-cols-6 gap-2">
+                                        {ICON_OPTIONS.map(iconName => (
+                                            <button
+                                                key={iconName}
+                                                type="button"
+                                                onClick={() => setForm({ ...form, icon: iconName })}
+                                                className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border text-xs transition-all ${
+                                                    form.icon === iconName
+                                                        ? "border-neutral-900 bg-neutral-900 text-white shadow-md"
+                                                        : "border-gray-200 hover:border-gray-300 hover:bg-neutral-50"
+                                                }`}
+                                            >
+                                                <IconPreview name={iconName} className={`h-5 w-5 ${form.icon === iconName ? "text-white" : ""}`} />
+                                                <span className="truncate w-full text-center leading-none" style={{ fontSize: "9px" }}>{iconName}</span>
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
-                            <div className="flex gap-3 pt-2">
-                                <button type="submit" className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary/90">
-                                    {editing ? "Update" : "Create"}
+
+                            {/* Footer actions */}
+                            <div className="flex gap-3 justify-end pt-2 border-t">
+                                <button type="button" onClick={resetForm} className="rounded-lg border px-4 py-2.5 text-sm font-medium hover:bg-neutral-50 transition-colors">
+                                    Discard
                                 </button>
-                                <button type="button" onClick={resetForm} className="border px-4 py-2 rounded-lg text-sm">
-                                    Cancel
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="flex items-center gap-2 rounded-lg bg-neutral-900 px-5 py-2.5 text-sm font-bold text-white shadow-lg transition-all hover:bg-neutral-800 disabled:opacity-50 min-w-[120px] justify-center"
+                                >
+                                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                                    {editing ? "Update" : "Create"}
                                 </button>
                             </div>
                         </form>
@@ -206,7 +253,7 @@ export default function ServicesAdmin() {
                             <tr key={service.id} className="hover:bg-neutral-50">
                                 <td className="px-4 py-3 text-muted-foreground">{service.sort_order}</td>
                                 <td className="px-4 py-3">
-                                    <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                                    <div className="h-8 w-8 rounded-lg bg-neutral-100 flex items-center justify-center text-neutral-600">
                                         <IconPreview name={service.icon} />
                                     </div>
                                 </td>
