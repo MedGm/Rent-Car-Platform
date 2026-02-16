@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
 from config import Config
+import os
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -13,8 +14,20 @@ def create_app(config_class=Config):
 
     db.init_app(app)
     migrate.init_app(app, db)
-    # Enable CORS for frontend requests
-    CORS(app, resources={r"/api/*": {"origins": ["http://localhost:3000"]}})
+
+    # Dynamic CORS: allow configured origins + localhost for dev
+    allowed_origins = [
+        "http://localhost:3000",
+    ]
+    frontend_url = os.environ.get("FRONTEND_URL")
+    if frontend_url:
+        allowed_origins.append(frontend_url)
+        # Also allow the Vercel preview URLs for the same project
+        if ".vercel.app" in frontend_url:
+            # e.g. misters-drivers.vercel.app → also allow misters-drivers-*.vercel.app
+            base = frontend_url.split("//")[1].split(".")[0]  # project name
+            allowed_origins.append(f"https://{base}-*.vercel.app")
+    CORS(app, resources={r"/api/*": {"origins": allowed_origins}})
 
     from app import models
     from app.auth import auth_bp

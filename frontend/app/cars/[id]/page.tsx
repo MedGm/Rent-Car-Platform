@@ -36,8 +36,8 @@ const FEATURES = [
 async function getCar(id: string) {
     try {
         // Use internal backend URL for server-side fetching in Docker
-        // Fallback to NEXT_PUBLIC_API_URL or localhost for non-docker/client-side scenarios
-        const apiUrl = process.env.INTERNAL_API_URL || 'http://backend:5000/api';
+        // Falls back to NEXT_PUBLIC_API_URL for Vercel / non-Docker deployments
+        const apiUrl = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://backend:5000/api';
         const url = `${apiUrl}/cars/${id}`;
         console.log(`[getCar] Fetching: ${url}`);
 
