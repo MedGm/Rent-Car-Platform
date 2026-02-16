@@ -6,7 +6,8 @@ import { ArrowLeft, Calendar } from "lucide-react";
 
 async function getArticle(id: string) {
     try {
-        const apiUrl = "http://backend:5000/api";
+        // Use internal backend URL for server-side fetching in Docker
+        const apiUrl = process.env.INTERNAL_API_URL || "http://backend:5000/api";
         const res = await fetch(`${apiUrl}/articles/${id}`, { cache: "no-store" });
         if (!res.ok) return null;
         return res.json();
@@ -25,9 +26,9 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
         <main className="min-h-screen bg-background">
             <Navbar />
 
-            {/* Hero image */}
+            {/* Hero image (responsive height) */}
             {article.image_url && (
-                <div className="relative w-full h-[400px] bg-gray-900">
+                <div className="relative w-full h-[250px] sm:h-[400px] bg-gray-900">
                     <img
                         src={article.image_url}
                         alt={article.title}
@@ -37,11 +38,11 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
                 </div>
             )}
 
-            <div className="container mx-auto px-4 py-8">
+            <div className="container mx-auto px-4 py-6 sm:py-8">
                 {/* Back link */}
                 <Link
                     href="/#articles"
-                    className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-6"
+                    className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-4 sm:mb-6"
                 >
                     <ArrowLeft className="mr-2 h-4 w-4" /> Back to Articles
                 </Link>
@@ -75,10 +76,10 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
                     )}
 
                     {/* Content */}
-                    <div className="prose prose-lg max-w-none prose-headings:font-bold prose-p:text-muted-foreground prose-p:leading-relaxed">
+                    <div className="prose prose-sm sm:prose-lg max-w-none prose-headings:font-bold prose-p:text-muted-foreground prose-p:leading-relaxed">
                         {article.content?.split("\n").map((paragraph: string, i: number) =>
                             paragraph.trim() ? (
-                                <p key={i} className="mb-4 text-muted-foreground leading-relaxed">
+                                <p key={i} className="mb-4 text-muted-foreground leading-relaxed text-base sm:text-lg">
                                     {paragraph}
                                 </p>
                             ) : (

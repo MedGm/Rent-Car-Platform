@@ -15,6 +15,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         setMounted(true);
     }, []);
 
+    // Force light mode in admin dashboard
+    useEffect(() => {
+        const html = document.documentElement;
+        const wasDark = html.classList.contains("dark");
+        html.classList.remove("dark");
+        return () => {
+            if (wasDark) html.classList.add("dark");
+        };
+    }, []);
+
     useEffect(() => {
         const token = localStorage.getItem("admin_token");
         if (!token) {

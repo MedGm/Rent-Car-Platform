@@ -15,16 +15,19 @@ interface UnavailableRange {
 interface BookingFormProps {
     carId: number;
     carName: string;
+    pricePerDay: number;
     isOpen: boolean;
     onClose: () => void;
 }
 
-export function BookingForm({ carId, carName, isOpen, onClose }: BookingFormProps) {
+export function BookingForm({ carId, carName, pricePerDay, isOpen, onClose }: BookingFormProps) {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState("");
     const [unavailableRanges, setUnavailableRanges] = useState<UnavailableRange[]>([]);
     const [dateConflict, setDateConflict] = useState(false);
+    const [totalPrice, setTotalPrice] = useState(0);
+    const [days, setDays] = useState(0);
     const [formData, setFormData] = useState({
         start_date: "",
         end_date: "",
@@ -54,6 +57,29 @@ export function BookingForm({ carId, carName, isOpen, onClose }: BookingFormProp
             setDateConflict(false);
         }
     }, [isOpen, carId]);
+
+    // Calculate price when dates change
+    useEffect(() => {
+        if (formData.start_date && formData.end_date) {
+            const start = new Date(formData.start_date);
+            const end = new Date(formData.end_date);
+            // Difference in days
+            const diffTime = Math.abs(end.getTime() - start.getTime());
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            // Check if end date is after start date
+            if (end > start) {
+                setDays(diffDays);
+                setTotalPrice(diffDays * pricePerDay);
+            } else {
+                setDays(0);
+                setTotalPrice(0);
+            }
+        } else {
+            setDays(0);
+            setTotalPrice(0);
+        }
+    }, [formData.start_date, formData.end_date, pricePerDay]);
 
     const checkDateConflict = useCallback((start: string, end: string) => {
         if (!start || !end) { setDateConflict(false); return; }
@@ -103,11 +129,14 @@ export function BookingForm({ carId, carName, isOpen, onClose }: BookingFormProp
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-in fade-in duration-200">
-            <div className="w-full max-w-2xl rounded-3xl bg-white p-0 shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden max-h-[90vh] flex flex-col">
+            <div className="w-full max-w-2xl rounded-3xl bg-background p-0 shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden max-h-[90vh] flex flex-col">
                 <div className="bg-neutral-900 p-6 text-white flex items-center justify-between shrink-0">
                     <div>
                         <h2 className="text-2xl font-bold tracking-tight">Request to Rent</h2>
-                        <p className="text-neutral-400 text-sm mt-1">{carName}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                            <span className="text-neutral-400 text-sm">{carName}</span>
+                            {pricePerDay > 0 && <span className="bg-white/20 text-xs px-2 py-0.5 rounded-full">{pricePerDay} DH/day</span>}
+                        </div>
                     </div>
                     <button onClick={onClose} className="rounded-full bg-white/10 p-2 hover:bg-white/20 transition-colors">
                         <X className="h-5 w-5" />
@@ -117,8 +146,8 @@ export function BookingForm({ carId, carName, isOpen, onClose }: BookingFormProp
                 <div className="overflow-y-auto flex-1 p-6 sm:p-8">
                     {success ? (
                         <div className="flex flex-col items-center justify-center py-10 text-center space-y-4 animate-in fade-in slide-in-from-bottom-4">
-                            <div className="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center">
-                                <CheckCircle className="h-8 w-8 text-green-600" />
+                            <div className="h-16 w-16 rounded-full bg-green-100 dark:bg-green-900/20 flex items-center justify-center">
+                                <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
                             </div>
                             <div>
                                 <h3 className="text-xl font-bold">Request Sent!</h3>
@@ -128,8 +157,8 @@ export function BookingForm({ carId, carName, isOpen, onClose }: BookingFormProp
                     ) : (
                         <form onSubmit={handleSubmit} className="space-y-6">
                             {error && (
-                                <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-                                    <AlertCircle className="h-5 w-5 mt-0.5 shrink-0 text-red-500" />
+                                <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 dark:bg-red-900/20 dark:border-red-900/50 p-4 text-sm text-red-700 dark:text-red-400">
+                                    <AlertCircle className="h-5 w-5 mt-0.5 shrink-0 text-red-500 dark:text-red-400" />
                                     <span>{error}</span>
                                 </div>
                             )}
@@ -151,6 +180,19 @@ export function BookingForm({ carId, carName, isOpen, onClose }: BookingFormProp
                                             className={`h-10 ${dateConflict ? 'border-red-400 ring-1 ring-red-400' : ''}`} />
                                     </div>
                                 </div>
+
+                                {days > 0 && totalPrice > 0 && (
+                                    <div className="bg-primary/5 dark:bg-primary/10 border border-primary/20 rounded-xl p-4 flex justify-between items-center">
+                                        <div>
+                                            <div className="text-sm font-medium text-muted-foreground">Estimated Total</div>
+                                            <div className="text-xs text-muted-foreground">{days} days x {pricePerDay} DH</div>
+                                        </div>
+                                        <div className="text-2xl font-extrabold text-primary">
+                                            {totalPrice.toLocaleString()} DH
+                                        </div>
+                                    </div>
+                                )}
+
                                 {dateConflict && (
                                     <p className="text-sm text-red-600 flex items-center gap-1.5">
                                         <AlertCircle className="h-3.5 w-3.5" />

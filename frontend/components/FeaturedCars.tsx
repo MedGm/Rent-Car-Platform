@@ -1,50 +1,84 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { CarCard } from "@/components/CarCard";
 import Link from "next/link";
-import { CarCard } from "./CarCard";
 import { ArrowRight } from "lucide-react";
 
-async function getFeaturedCars() {
-    try {
-        // Use internal backend URL for server-side fetching
-        const apiUrl = 'http://backend:5000/api';
-        const res = await fetch(`${apiUrl}/cars`, {
-            cache: 'no-store'
-        });
-        if (!res.ok) return [];
-
-        const cars = await res.json();
-        return cars.slice(0, 3); // Return top 3 cars
-    } catch (error) {
-        return [];
-    }
+interface Car {
+    id: number;
+    name: string;
+    category: string;
+    specs: { seats?: number; fuel?: string; transmission?: string };
+    images: string[];
+    brand_logo?: string;
+    is_active: boolean;
+    price_per_day: number;
 }
 
-export async function FeaturedCars() {
-    const cars = await getFeaturedCars();
+export function FeaturedCars() {
+    const [cars, setCars] = useState<Car[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    if (cars.length === 0) return null;
+    useEffect(() => {
+        async function fetchCars() {
+            try {
+                const res = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"}/cars`
+                );
+                if (!res.ok) throw new Error("Failed to fetch");
+                const data = await res.json();
+                setCars(data.slice(0, 6));
+            } catch (error) {
+                console.error("Error fetching cars:", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchCars();
+    }, []);
 
     return (
-        <section className="py-24 bg-gray-50">
+        <section id="cars" className="py-20 sm:py-28 bg-background">
             <div className="container mx-auto">
-                <div className="flex items-center justify-between mb-12">
-                    <div>
-                        <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Our Premium Fleet</h2>
-                        <p className="mt-2 text-muted-foreground">Choose from our exclusive selection of high-end vehicles.</p>
+                {/* Section Header */}
+                <div className="mb-12 text-center">
+                    <span className="inline-block rounded-full bg-primary/10 dark:bg-primary/20 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary mb-4">
+                        Notre Flotte
+                    </span>
+                    <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl text-foreground">
+                        Featured <span className="text-primary">Cars</span>
+                    </h2>
+                    <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
+                        Explore our premium fleet of vehicles, each carefully selected for comfort, reliability, and performance.
+                    </p>
+                </div>
+
+                {/* Grid */}
+                {loading ? (
+                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                        {[1, 2, 3].map((i) => (
+                            <div
+                                key={i}
+                                className="h-[380px] animate-pulse rounded-2xl bg-muted"
+                            />
+                        ))}
                     </div>
-                    <Link href="/cars" className="hidden md:flex items-center text-primary font-bold hover:underline">
+                ) : (
+                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                        {cars.map((car) => (
+                            <CarCard key={car.id} car={car} />
+                        ))}
+                    </div>
+                )}
+
+                {/* View All Button */}
+                <div className="mt-12 text-center">
+                    <Link
+                        href="/cars"
+                        className="inline-flex h-12 items-center justify-center rounded-full border-2 border-primary bg-transparent px-8 text-sm font-bold text-primary transition-all hover:bg-primary hover:text-white hover:scale-105"
+                    >
                         View All Cars <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                </div>
-
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {cars.map((car: any) => (
-                        <CarCard key={car.id} car={car} />
-                    ))}
-                </div>
-
-                <div className="mt-12 text-center md:hidden">
-                    <Link href="/cars" className="inline-flex items-center justify-center rounded-full bg-primary px-8 py-3 text-base font-bold text-white transition-transform hover:scale-105">
-                        View All Cars
                     </Link>
                 </div>
             </div>

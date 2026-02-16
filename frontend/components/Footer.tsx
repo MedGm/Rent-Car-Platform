@@ -65,12 +65,12 @@ function LeafletMap() {
 
 export function Footer() {
     return (
-        <footer className="bg-black text-white pt-16 pb-8" id="contact">
-            <div className="container mx-auto">
-                <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4 mb-16">
+        <footer className="bg-black dark:bg-[#0a0000] text-white pt-16 pb-8" id="contact">
+            <div className="container mx-auto px-6 sm:px-4">
+                <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4 mb-16">
                     {/* Brand & About */}
-                    <div className="space-y-4">
-                        <div className="relative h-8 w-32">
+                    <div className="flex flex-col items-center md:items-start text-center md:text-left space-y-4">
+                        <div className="relative h-10 w-40">
                             <Image
                                 src="/logo.png"
                                 alt="Misters Drivers Logo"
@@ -78,50 +78,50 @@ export function Footer() {
                                 className="object-contain brightness-0 invert"
                             />
                         </div>
-                        <p className="text-gray-400 text-sm leading-relaxed">
+                        <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
                             Agence de location de voitures à Agadir. Service premium, flotte variée et assistance 24h/24.
                             Votre partenaire de mobilité au Maroc.
                         </p>
                         <div className="flex gap-4">
-                            <Link href="https://www.facebook.com/profile.php?id=61561026257498" target="_blank" className="text-gray-400 hover:text-primary transition-colors">
+                            <Link href="https://www.facebook.com/profile.php?id=61561026257498" target="_blank" className="text-gray-400 hover:text-primary transition-colors p-2 -m-2">
                                 <Facebook className="h-5 w-5" />
                             </Link>
-                            <Link href="https://www.instagram.com/misters.drivers" target="_blank" className="text-gray-400 hover:text-primary transition-colors">
+                            <Link href="https://www.instagram.com/misters.drivers" target="_blank" className="text-gray-400 hover:text-primary transition-colors p-2 -m-2">
                                 <Instagram className="h-5 w-5" />
                             </Link>
                         </div>
                     </div>
 
                     {/* Quick Links */}
-                    <div>
+                    <div className="text-center md:text-left">
                         <h4 className="font-bold text-lg mb-6">Liens Rapides</h4>
                         <ul className="space-y-3 text-gray-400 text-sm">
-                            <li><Link href="/" className="hover:text-white transition-colors">Accueil</Link></li>
-                            <li><Link href="/cars" className="hover:text-white transition-colors">Notre Flotte</Link></li>
-                            <li><Link href="/#services" className="hover:text-white transition-colors">Services</Link></li>
-                            <li><Link href="/#articles" className="hover:text-white transition-colors">Articles</Link></li>
-                            <li><Link href="#contact" className="hover:text-white transition-colors">Contact</Link></li>
+                            <li><Link href="/" className="hover:text-white transition-colors block py-1">Accueil</Link></li>
+                            <li><Link href="/cars" className="hover:text-white transition-colors block py-1">Notre Flotte</Link></li>
+                            <li><Link href="/#services" className="hover:text-white transition-colors block py-1">Services</Link></li>
+                            <li><Link href="/#articles" className="hover:text-white transition-colors block py-1">Articles</Link></li>
+                            <li><Link href="#contact" className="hover:text-white transition-colors block py-1">Contact</Link></li>
                         </ul>
                     </div>
 
                     {/* Contact Info */}
-                    <div>
+                    <div className="text-center md:text-left">
                         <h4 className="font-bold text-lg mb-6">Contact</h4>
                         <ul className="space-y-4 text-gray-400 text-sm">
-                            <li className="flex items-start gap-3">
-                                <MapPin className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                            <li className="flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-3">
+                                <MapPin className="h-5 w-5 text-primary shrink-0" />
                                 <span>Mag N° AH 545, Cité El Qods, Agadir, Maroc</span>
                             </li>
-                            <li className="flex items-center gap-3">
+                            <li className="flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-3">
                                 <Phone className="h-5 w-5 text-primary shrink-0" />
                                 <div className="flex flex-col">
-                                    <Link href="tel:+212528210909" className="hover:text-white transition-colors">05 28 21 09 09</Link>
-                                    <Link href="tel:+212671920545" className="hover:text-white transition-colors">06 71 92 05 45</Link>
+                                    <Link href="tel:+212528210909" className="hover:text-white transition-colors py-1">05 28 21 09 09</Link>
+                                    <Link href="tel:+212671920545" className="hover:text-white transition-colors py-1">06 71 92 05 45</Link>
                                 </div>
                             </li>
-                            <li className="flex items-center gap-3">
+                            <li className="flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-3">
                                 <Mail className="h-5 w-5 text-primary shrink-0" />
-                                <Link href="mailto:driversmisters@gmail.com" className="hover:text-white transition-colors">
+                                <Link href="mailto:driversmisters@gmail.com" className="hover:text-white transition-colors py-1">
                                     driversmisters@gmail.com
                                 </Link>
                             </li>
@@ -129,10 +129,12 @@ export function Footer() {
                     </div>
 
                     {/* Map */}
-                    <div>
+                    <div className="text-center md:text-left">
                         <h4 className="font-bold text-lg mb-6">Nous Trouver</h4>
-                        <LeafletMap />
-                        <p className="text-gray-500 text-xs mt-2">Cité El Qods, Agadir</p>
+                        <div className="h-32 sm:h-40 w-full rounded-xl overflow-hidden ring-1 ring-white/10">
+                            <LeafletMap />
+                        </div>
+                        <p className="text-gray-500 text-xs mt-2 uppercase tracking-widest">Cité El Qods, Agadir</p>
                     </div>
                 </div>
 

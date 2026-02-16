@@ -13,6 +13,7 @@ interface Car {
     specs: any;
     images: string[];
     is_active: boolean;
+    price_per_day: number;
 }
 
 export default function CarsPage() {

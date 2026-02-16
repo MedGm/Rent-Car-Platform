@@ -23,6 +23,7 @@ class Car(db.Model):
     images = db.Column(JSONB) # List of image URLs
     brand_logo = db.Column(db.String(500))  # Brand logo image URL
     is_active = db.Column(db.Boolean, default=True)
+    price_per_day = db.Column(db.Integer, default=0)
 
     bookings = db.relationship('Booking', backref='car', lazy='dynamic')
     calendar_blocks = db.relationship('CalendarBlock', backref='car', lazy='dynamic')
@@ -35,6 +36,7 @@ class Booking(db.Model):
     start_date = db.Column(db.Date, nullable=False)
     end_date = db.Column(db.Date, nullable=False)
     status = db.Column(db.String(20), default='pending') # pending, confirmed, modified, cancelled
+    total_price = db.Column(db.Float, default=0.0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     # Customer details for guest bookings / contracts

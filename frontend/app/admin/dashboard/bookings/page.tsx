@@ -11,6 +11,7 @@ interface Booking {
     end_date: string;
     status: string;
     created_at: string;
+    total_price: number;
 }
 
 export default function AdminBookingsPage() {
@@ -71,6 +72,7 @@ export default function AdminBookingsPage() {
                         <tr>
                             <th className="p-4 font-medium text-muted-foreground">Car</th>
                             <th className="p-4 font-medium text-muted-foreground">Dates</th>
+                            <th className="p-4 font-medium text-muted-foreground">Total</th>
                             <th className="p-4 font-medium text-muted-foreground">Status</th>
                             <th className="p-4 font-medium text-muted-foreground">Created</th>
                             <th className="p-4 font-medium text-muted-foreground text-right">Actions</th>
@@ -82,6 +84,9 @@ export default function AdminBookingsPage() {
                                 <td className="p-4 font-bold">{booking.car_name}</td>
                                 <td className="p-4">
                                     {new Date(booking.start_date).toLocaleDateString()} - {new Date(booking.end_date).toLocaleDateString()}
+                                </td>
+                                <td className="p-4 font-semibold text-primary">
+                                    {booking.total_price ? `${booking.total_price.toLocaleString()} DH` : '-'}
                                 </td>
                                 <td className="p-4">
                                     <span className={cn(

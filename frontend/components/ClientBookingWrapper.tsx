@@ -4,7 +4,7 @@ import { useState } from "react";
 import { BookingForm } from "./BookingForm";
 import { Calendar } from "lucide-react";
 
-export default function ClientBookingWrapper({ carId, carName }: { carId: number, carName: string }) {
+export default function ClientBookingWrapper({ carId, carName, pricePerDay }: { carId: number, carName: string, pricePerDay: number }) {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -19,6 +19,7 @@ export default function ClientBookingWrapper({ carId, carName }: { carId: number
             <BookingForm
                 carId={carId}
                 carName={carName}
+                pricePerDay={pricePerDay}
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
             />

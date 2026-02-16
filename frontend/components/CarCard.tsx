@@ -2,88 +2,100 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Car, Users, Fuel, Cog } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Fuel, Users, Settings2 } from "lucide-react";
 
-interface CarProps {
+interface Car {
     id: number;
     name: string;
     category: string;
-    specs: {
-        seats?: number;
-        transmission?: string;
-        fuel?: string;
-    };
+    specs: { seats?: number; fuel?: string; transmission?: string };
     images: string[];
     brand_logo?: string;
     is_active: boolean;
+    price_per_day: number;
 }
 
-export function CarCard({ car }: { car: CarProps }) {
+export function CarCard({ car }: { car: Car }) {
     return (
-        <div className="group relative overflow-hidden rounded-xl border bg-card shadow-sm transition-all hover:shadow-lg hover:border-primary/50">
-            <div className="relative aspect-[16/9] overflow-hidden bg-muted">
-                {car.images[0] ? (
+        <Link
+            href={`/cars/${car.id}`}
+            className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-300 hover:shadow-xl hover:shadow-black/10 dark:hover:shadow-red-900/20 hover:-translate-y-1"
+        >
+            {/* Image */}
+            <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
+                {car.images?.[0] ? (
                     <Image
                         src={car.images[0]}
                         alt={car.name}
                         fill
-                        unoptimized
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                 ) : (
                     <div className="flex h-full items-center justify-center text-muted-foreground">
-                        <Car className="h-12 w-12 opacity-50" />
+                        No Image
                     </div>
                 )}
-                <div className="absolute top-2 right-2 rounded-full bg-background/90 px-3 py-1 text-xs font-bold uppercase tracking-wider text-foreground backdrop-blur-sm">
+                {/* Category Badge */}
+                <span className="absolute top-3 left-3 rounded-full bg-primary/90 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
                     {car.category}
-                </div>
-            </div>
-
-            <div className="p-5">
-                <div className="flex items-center gap-3">
-                    {car.brand_logo && (
-                        <img
+                </span>
+                {/* Brand Logo */}
+                {car.brand_logo && (
+                    <div className="absolute top-3 right-3 h-8 w-8 rounded-full bg-white/90 dark:bg-black/60 backdrop-blur-sm p-1 shadow-sm">
+                        <Image
                             src={car.brand_logo}
-                            alt="brand"
-                            className="h-8 w-8 object-contain"
+                            alt="Brand"
+                            fill
+                            className="object-contain p-1"
                         />
-                    )}
-                    <h3 className="text-xl font-bold">{car.name}</h3>
+                    </div>
+                )}
+            </div>
+
+            {/* Info */}
+            <div className="flex flex-1 flex-col p-4 sm:p-5">
+                <div className="flex justify-between items-start">
+                    <h3 className="text-lg font-bold text-card-foreground group-hover:text-primary transition-colors">
+                        {car.name}
+                    </h3>
+                    <div className="text-right">
+                        <div className="text-lg font-bold text-primary">
+                            {car.price_per_day > 0 ? `${car.price_per_day} DH` : 'Contact us'}
+                        </div>
+                        <div className="text-xs text-muted-foreground">/ day</div>
+                    </div>
                 </div>
 
-                <div className="mt-4 grid grid-cols-2 gap-2 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                        <Users className="h-4 w-4 text-red-500" />
-                        <span className="font-semibold text-foreground">Seats:</span> {car.specs.seats || "-"}
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <Fuel className="h-4 w-4 text-red-500" />
-                        <span className="font-semibold text-foreground">Fuel:</span> {car.specs.fuel || "-"}
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <Cog className="h-4 w-4 text-red-500" />
-                        <span className="font-semibold text-foreground">Trans:</span> {car.specs.transmission || "-"}
-                    </div>
-                </div>
-
-                <div className="mt-6 flex items-center justify-between border-t pt-4">
-                    <div className="flex items-center gap-2">
-                        <span className="relative flex h-3 w-3">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                {/* Specs */}
+                <div className="mt-3 flex flex-wrap gap-3 text-sm text-muted-foreground">
+                    {car.specs?.seats && (
+                        <span className="flex items-center gap-1.5">
+                            <Users className="h-4 w-4" />
+                            {car.specs.seats} Places
                         </span>
-                        <span className="text-xs font-medium text-green-600">Available Now</span>
-                    </div>
+                    )}
+                    {car.specs?.fuel && (
+                        <span className="flex items-center gap-1.5">
+                            <Fuel className="h-4 w-4" />
+                            {car.specs.fuel}
+                        </span>
+                    )}
+                    {car.specs?.transmission && (
+                        <span className="flex items-center gap-1.5">
+                            <Settings2 className="h-4 w-4" />
+                            {car.specs.transmission}
+                        </span>
+                    )}
+                </div>
 
-                    <Link
-                        href={`/cars/${car.id}`}
-                        className="rounded-lg bg-primary px-4 py-2 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90"
-                    >
-                        Details
-                    </Link>
+                {/* CTA */}
+                <div className="mt-auto pt-4">
+                    <span className="inline-flex h-9 items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20 px-5 text-sm font-semibold text-primary transition-colors group-hover:bg-primary group-hover:text-white w-full">
+                        View Details
+                    </span>
                 </div>
             </div>
-        </div>
+        </Link>
     );
 }

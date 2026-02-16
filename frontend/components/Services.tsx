@@ -1,115 +1,163 @@
 "use client";
 
-import * as LucideIcons from "lucide-react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+    Plane,
+    Clock,
+    Shield,
+    Gauge,
+    UserCheck,
+    Baby,
+    type LucideIcon,
+} from "lucide-react";
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
-
-interface ServiceItem {
+interface ServiceData {
     id: number;
     title: string;
     description: string;
     icon: string;
+    is_active: boolean;
+    sort_order: number;
 }
 
-// Fallback services shown when the API has none
-const FALLBACK_SERVICES: ServiceItem[] = [
-    { id: -1, title: "24/7 Support", description: "Our team is available round the clock to assist you with your booking or on-road needs.", icon: "Clock" },
-    { id: -2, title: "Premium Fleet", description: "Every vehicle is rigorously inspected and maintained to showroom standards for your safety.", icon: "Shield" },
-    { id: -3, title: "Concierge Service", description: "Need a driver? Airport transfer? We offer tailored solutions to make your trip effortless.", icon: "HeartHandshake" },
-];
-
-function DynamicIcon({ name }: { name: string }) {
-    const Icon = (LucideIcons as any)[name];
-    if (!Icon) return <LucideIcons.Shield className="h-8 w-8 text-red-600" />;
-    return <Icon className="h-8 w-8 text-red-600" />;
-}
+const ICON_MAP: Record<string, LucideIcon> = {
+    Plane,
+    Clock,
+    Shield,
+    Gauge,
+    UserCheck,
+    Baby,
+};
 
 export function Services() {
-    const [services, setServices] = useState<ServiceItem[]>([]);
+    const [services, setServices] = useState<ServiceData[]>([]);
+    const [loading, setLoading] = useState(true);
     const scrollRef = useRef<HTMLDivElement>(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
 
     useEffect(() => {
-        fetch(`${API}/services`)
-            .then(r => r.ok ? r.json() : [])
-            .then((data: ServiceItem[]) => {
-                setServices(data.length > 0 ? data : FALLBACK_SERVICES);
-            })
-            .catch(() => setServices(FALLBACK_SERVICES));
+        async function fetchServices() {
+            try {
+                const res = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api"}/services`
+                );
+                if (!res.ok) throw new Error("Failed to fetch");
+                const data = await res.json();
+                setServices(data);
+            } catch (error) {
+                console.error("Error fetching services:", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchServices();
     }, []);
 
     const checkScroll = () => {
         const el = scrollRef.current;
         if (!el) return;
         setCanScrollLeft(el.scrollLeft > 0);
-        setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 10);
+        setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 1);
     };
 
     useEffect(() => {
         checkScroll();
         const el = scrollRef.current;
-        if (el) el.addEventListener("scroll", checkScroll);
+        if (!el) return;
+        el.addEventListener("scroll", checkScroll, { passive: true });
         window.addEventListener("resize", checkScroll);
         return () => {
-            if (el) el.removeEventListener("scroll", checkScroll);
+            el.removeEventListener("scroll", checkScroll);
             window.removeEventListener("resize", checkScroll);
         };
     }, [services]);
 
-    const scroll = (dir: "left" | "right") => {
+    const scroll = (direction: "left" | "right") => {
         const el = scrollRef.current;
         if (!el) return;
-        const cardWidth = el.querySelector("div")?.offsetWidth || 320;
-        el.scrollBy({ left: dir === "left" ? -cardWidth - 16 : cardWidth + 16, behavior: "smooth" });
+        const cardWidth = el.querySelector<HTMLElement>(":scope > div")?.offsetWidth || 340;
+        el.scrollBy({ left: direction === "left" ? -cardWidth - 24 : cardWidth + 24, behavior: "smooth" });
     };
 
     return (
-        <section className="py-24 bg-white" id="services">
-            <div className="container mx-auto">
-                <div className="flex items-center justify-between mb-16">
-                    <div className="text-center flex-1">
-                        <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Our Services</h2>
-                        <p className="mt-4 text-muted-foreground">More than just a rental. A complete mobility experience.</p>
+        <section id="services" className="py-20 sm:py-28 bg-secondary/50 dark:bg-secondary/30">
+            <div className="container mx-auto px-6 sm:px-4">
+                {/* Section Header */}
+                <div className="mb-12 flex flex-col items-center text-center md:flex-row md:items-end md:justify-between md:text-left gap-8">
+                    <div className="max-w-2xl">
+                        <span className="inline-block rounded-full bg-primary/10 dark:bg-primary/20 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary mb-4">
+                            Ce que nous offrons
+                        </span>
+                        <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl text-foreground leading-tight">
+                            Our <span className="text-primary">Services</span>
+                        </h2>
+                        <p className="mt-4 text-muted-foreground text-base sm:text-lg">
+                            Everything you need for a seamless and worry-free rental experience.
+                        </p>
                     </div>
-                    <div className="flex items-center gap-2">
+
+                    {/* Carousel Controls */}
+                    <div className="hidden sm:flex items-center gap-2">
                         <button
                             onClick={() => scroll("left")}
                             disabled={!canScrollLeft}
-                            className="h-10 w-10 rounded-full border bg-white flex items-center justify-center text-gray-600 hover:bg-red-50 hover:border-red-300 hover:text-red-600 disabled:opacity-30 disabled:hover:bg-white disabled:hover:border-gray-200 disabled:hover:text-gray-600 transition-colors"
+                            className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground/70 transition-all hover:bg-accent hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
+                            aria-label="Scroll left"
                         >
                             <ChevronLeft className="h-5 w-5" />
                         </button>
                         <button
                             onClick={() => scroll("right")}
                             disabled={!canScrollRight}
-                            className="h-10 w-10 rounded-full border bg-white flex items-center justify-center text-gray-600 hover:bg-red-50 hover:border-red-300 hover:text-red-600 disabled:opacity-30 disabled:hover:bg-white disabled:hover:border-gray-200 disabled:hover:text-gray-600 transition-colors"
+                            className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card text-foreground/70 transition-all hover:bg-accent hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
+                            aria-label="Scroll right"
                         >
                             <ChevronRight className="h-5 w-5" />
                         </button>
                     </div>
                 </div>
 
-                <div
-                    ref={scrollRef}
-                    className="flex gap-6 overflow-x-auto scroll-smooth pb-4 -mb-4"
-                    style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-                >
-                    {services.map((service) => (
-                        <div
-                            key={service.id}
-                            className="flex-shrink-0 w-[300px] sm:w-[340px] flex flex-col items-center text-center p-8 rounded-2xl border border-gray-100 hover:border-red-200 hover:shadow-lg transition-all bg-white"
-                        >
-                            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-50 mb-6">
-                                <DynamicIcon name={service.icon} />
-                            </div>
-                            <h3 className="text-xl font-bold mb-3">{service.title}</h3>
-                            <p className="text-muted-foreground">{service.description}</p>
-                        </div>
-                    ))}
-                </div>
+                {/* Carousel */}
+                {loading ? (
+                    <div className="flex gap-6 overflow-hidden">
+                        {[1, 2, 3].map((i) => (
+                            <div
+                                key={i}
+                                className="h-[200px] min-w-[300px] animate-pulse rounded-2xl bg-muted"
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div
+                        ref={scrollRef}
+                        className="flex gap-6 overflow-x-auto scroll-smooth pb-8 -mb-4 snap-x snap-mandatory scrollbar-hide no-scrollbar"
+                        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+                    >
+                        {services.map((service) => {
+                            const IconComponent = ICON_MAP[service.icon] || Shield;
+                            return (
+                                <div
+                                    key={service.id}
+                                    className="group relative min-w-[280px] sm:min-w-[320px] max-w-[360px] flex-shrink-0 snap-start overflow-hidden rounded-2xl border border-border bg-card p-6 sm:p-8 transition-all duration-300 hover:shadow-xl hover:shadow-black/5 dark:hover:shadow-red-900/15 hover:-translate-y-1"
+                                >
+                                    {/* Icon */}
+                                    <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 dark:bg-primary/20 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
+                                        <IconComponent className="h-6 w-6" />
+                                    </div>
+
+                                    <h3 className="text-lg font-bold text-card-foreground mb-2">
+                                        {service.title}
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground leading-relaxed">
+                                        {service.description}
+                                    </p>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
             </div>
         </section>
     );

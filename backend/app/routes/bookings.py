@@ -36,11 +36,23 @@ def create_booking_request():
     if conflict or maintenance:
         return jsonify({'message': 'This car is not available for the selected dates. Please choose different dates.'}), 409
 
+    # Calculate total price
+    car = Car.query.get(data['car_id'])
+    if not car:
+        return jsonify({'message': 'Car not found'}), 404
+        
+    duration = (end_date - start_date).days
+    if duration <= 0:
+        return jsonify({'message': 'Invalid duration'}), 400
+        
+    total_price = duration * car.price_per_day
+
     new_booking = Booking(
         car_id=data['car_id'],
         start_date=start_date,
         end_date=end_date,
         status='pending',
+        total_price=total_price,
         customer_name=data.get('driver_name', data.get('customer_name', '')),
         customer_email=data.get('email', data.get('customer_email', '')),
         customer_phone=data.get('phone', data.get('customer_phone', '')),
@@ -62,7 +74,7 @@ def create_booking_request():
     db.session.add(new_booking)
     db.session.commit()
     
-    return jsonify({'message': 'Booking request submitted', 'id': new_booking.id}), 201
+    return jsonify({'message': 'Booking request submitted', 'id': new_booking.id, 'total_price': total_price}), 201
 
 @bookings_bp.route('', methods=['GET'])
 @admin_required
@@ -80,6 +92,7 @@ def get_bookings():
             'start_date': b.start_date.isoformat(),
             'end_date': b.end_date.isoformat(),
             'status': b.status,
+            'total_price': b.total_price,
             'created_at': b.created_at.isoformat(),
             'has_contract': b.contract is not None,
             'contract_id': b.contract.id if b.contract else None,

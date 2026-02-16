@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Lock } from "lucide-react";
 
@@ -9,6 +9,16 @@ export default function AdminLogin() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const router = useRouter();
+
+    // Force light mode on login page
+    useEffect(() => {
+        const html = document.documentElement;
+        const wasDark = html.classList.contains("dark");
+        html.classList.remove("dark");
+        return () => {
+            if (wasDark) html.classList.add("dark");
+        };
+    }, []);
 
     async function handleLogin(e: React.FormEvent) {
         e.preventDefault();

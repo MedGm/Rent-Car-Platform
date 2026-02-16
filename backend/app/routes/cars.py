@@ -21,7 +21,8 @@ def get_cars():
             'specs': car.specs,
             'images': car.images,
             'brand_logo': car.brand_logo,
-            'is_active': car.is_active
+            'is_active': car.is_active,
+            'price_per_day': car.price_per_day
         })
     return jsonify(result)
 
@@ -36,7 +37,8 @@ def get_car(id):
         'specs': car.specs,
         'images': car.images,
         'brand_logo': car.brand_logo,
-        'is_active': car.is_active
+        'is_active': car.is_active,
+        'price_per_day': car.price_per_day
     })
 
 @cars_bp.route('', methods=['POST'])
@@ -80,7 +82,8 @@ def create_car():
             specs=specs,
             images=image_urls,
             brand_logo=brand_logo_url or None,
-            is_active=data.get('is_active') == 'true'
+            is_active=data.get('is_active') == 'true',
+            price_per_day=int(data.get('price_per_day', 0))
         )
         db.session.add(new_car)
         db.session.commit()
@@ -102,6 +105,7 @@ def update_car(id):
             car.specs = data.get('specs', car.specs)
             car.images = data.get('images', car.images)
             car.is_active = data.get('is_active', car.is_active)
+            car.price_per_day = data.get('price_per_day', car.price_per_day)
         else:
             data = request.form
             files = request.files.getlist('images')
@@ -129,6 +133,9 @@ def update_car(id):
             if 'is_active' in data:
                 car.is_active = data.get('is_active') == 'true'
 
+            if 'price_per_day' in data:
+                car.price_per_day = int(data.get('price_per_day'))
+            
             # If existing_images provided (to keep old ones), merge them
             # This logic depends on how frontend sends data. 
             # If frontend sends 'images' as list of URLs, it might come in via form as multiple values?

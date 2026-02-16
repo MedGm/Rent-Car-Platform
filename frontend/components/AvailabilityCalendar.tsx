@@ -71,14 +71,14 @@ export function AvailabilityCalendar({ carId }: { carId: number }) {
     };
 
     return (
-        <div className="rounded-2xl border bg-card p-6 shadow-lg hover:shadow-xl transition-all duration-300">
-            <div className="mb-6 flex items-center justify-between">
-                <h3 className="font-bold text-xl tracking-tight">Check Availability</h3>
-                <div className="flex gap-1.5 bg-secondary/50 p-1 rounded-full">
+        <div className="rounded-xl border bg-card p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="mb-6 flex flex-col gap-4 items-center">
+                <h3 className="font-bold text-xl tracking-tight text-center w-full">Check Availability</h3>
+                <div className="flex w-full items-center justify-between bg-secondary/50 p-1.5 rounded-full">
                     <button onClick={prevMonth} className="rounded-full p-2 hover:bg-white hover:shadow-sm transition-all text-muted-foreground hover:text-foreground">
                         <ChevronLeft className="h-4 w-4" />
                     </button>
-                    <span className="text-sm font-bold min-w-[140px] flex items-center justify-center">
+                    <span className="text-sm font-bold flex-1 flex items-center justify-center">
                         {currentDate.toLocaleString("default", { month: "long", year: "numeric" })}
                     </span>
                     <button onClick={nextMonth} className="rounded-full p-2 hover:bg-white hover:shadow-sm transition-all text-muted-foreground hover:text-foreground">

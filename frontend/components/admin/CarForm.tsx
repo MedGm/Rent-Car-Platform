@@ -28,7 +28,8 @@ export function CarForm({ initialData, isEdit = false }: CarFormProps) {
             transmission: "Automatic"
         },
         images: [""],
-        is_active: true
+        is_active: true,
+        price_per_day: 0
     });
 
     const [files, setFiles] = useState<File[]>([]);
@@ -46,7 +47,8 @@ export function CarForm({ initialData, isEdit = false }: CarFormProps) {
                     transmission: initialData.specs?.transmission || "Automatic"
                 },
                 images: initialData.images || [],
-                is_active: initialData.is_active ?? true
+                is_active: initialData.is_active ?? true,
+                price_per_day: initialData.price_per_day || 0
             });
             if (initialData.brand_logo) {
                 setBrandLogoPreview(initialData.brand_logo);
@@ -77,7 +79,8 @@ export function CarForm({ initialData, isEdit = false }: CarFormProps) {
         setLoading(true);
 
         const token = localStorage.getItem("admin_token");
-        const url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/cars${isEdit ? `/${initialData.id}` : ''}`;
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+        const url = `${apiUrl}/cars${isEdit ? `/${initialData.id}` : ''}`;
         const method = isEdit ? 'PUT' : 'POST';
 
         const data = new FormData();
@@ -85,6 +88,7 @@ export function CarForm({ initialData, isEdit = false }: CarFormProps) {
         data.append("category", formData.category);
         data.append("specs", JSON.stringify(formData.specs));
         data.append("is_active", String(formData.is_active));
+        data.append("price_per_day", String(formData.price_per_day));
 
         // Append existing images JSON
         data.append("existing_images", JSON.stringify(formData.images));
@@ -191,15 +195,28 @@ export function CarForm({ initialData, isEdit = false }: CarFormProps) {
                                     </Select>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="isActive">Status</Label>
-                                    <div className="flex h-10 items-center justify-between rounded-lg border px-3 py-2">
-                                        <span className="text-sm text-muted-foreground">Available for Rent</span>
-                                        <Switch
-                                            id="isActive"
-                                            checked={formData.is_active}
-                                            onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_active: checked }))}
-                                        />
-                                    </div>
+                                    <Label htmlFor="price_per_day">Price per Day (DH)</Label>
+                                    <Input
+                                        id="price_per_day"
+                                        name="price_per_day"
+                                        type="number"
+                                        min="0"
+                                        placeholder="e.g. 500"
+                                        value={formData.price_per_day}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="isActive">Status</Label>
+                                <div className="flex h-10 items-center justify-between rounded-lg border px-3 py-2">
+                                    <span className="text-sm text-muted-foreground">Available for Rent</span>
+                                    <Switch
+                                        id="isActive"
+                                        checked={formData.is_active}
+                                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_active: checked }))}
+                                    />
                                 </div>
                             </div>
                         </CardContent>

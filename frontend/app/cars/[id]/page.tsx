@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { Navbar } from "@/components/Navbar";
 import { AvailabilityCalendar } from "@/components/AvailabilityCalendar";
 import ClientBookingWrapper from "@/components/ClientBookingWrapper";
 import { ImageCarousel } from "@/components/ImageCarousel";
@@ -26,18 +25,19 @@ const SPEC_ICONS: Record<string, any> = {
 };
 
 const FEATURES = [
-    { name: "Bluetooth Audio", icon: Bluetooth, color: "text-blue-600", bg: "bg-blue-100" },
-    { name: "Navigation System", icon: Navigation, color: "text-emerald-600", bg: "bg-emerald-100" },
-    { name: "Leather Seats", icon: Armchair, color: "text-amber-600", bg: "bg-amber-100" },
-    { name: "Parking Sensors", icon: Radar, color: "text-violet-600", bg: "bg-violet-100" },
-    { name: "Cruise Control", icon: Gauge, color: "text-rose-600", bg: "bg-rose-100" },
-    { name: "Apple CarPlay", icon: Smartphone, color: "text-sky-600", bg: "bg-sky-100" },
+    { name: "Bluetooth Audio", icon: Bluetooth, color: "text-foreground", bg: "bg-secondary/20" },
+    { name: "Navigation System", icon: Navigation, color: "text-foreground", bg: "bg-secondary/20" },
+    { name: "Leather Seats", icon: Armchair, color: "text-foreground", bg: "bg-secondary/20" },
+    { name: "Parking Sensors", icon: Radar, color: "text-foreground", bg: "bg-secondary/20" },
+    { name: "Cruise Control", icon: Gauge, color: "text-foreground", bg: "bg-secondary/20" },
+    { name: "Apple CarPlay", icon: Smartphone, color: "text-foreground", bg: "bg-secondary/20" },
 ];
 
 async function getCar(id: string) {
     try {
-        // Use internal backend URL for server-side fetching
-        const apiUrl = 'http://backend:5000/api';
+        // Use internal backend URL for server-side fetching in Docker
+        // Fallback to NEXT_PUBLIC_API_URL or localhost for non-docker/client-side scenarios
+        const apiUrl = process.env.INTERNAL_API_URL || 'http://backend:5000/api';
         const url = `${apiUrl}/cars/${id}`;
         console.log(`[getCar] Fetching: ${url}`);
 
@@ -77,7 +77,6 @@ export default async function CarDetailsPage({ params }: { params: Promise<{ id:
 
     return (
         <main className="min-h-screen bg-background pb-20">
-            <Navbar />
 
             {/* Top bar with back link */}
             <div className="container mx-auto px-4 pt-6">
@@ -101,17 +100,19 @@ export default async function CarDetailsPage({ params }: { params: Promise<{ id:
                         </div>
                     </div>
 
-                    {/* Image Carousel (square) */}
-                    <ImageCarousel images={car.images} alt={car.name} />
+                    {/* Image Carousel (responsive aspect ratio) */}
+                    <div className="aspect-[16/10] sm:aspect-video w-full">
+                        <ImageCarousel images={car.images} alt={car.name} />
+                    </div>
 
                     {/* Specs */}
                     <section>
                         <h2 className="text-2xl font-bold mb-6">Vehicle Specifications</h2>
-                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                        <div className="grid grid-cols-1 xs:grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3">
                             {Object.entries(car.specs).map(([key, value]) => {
                                 const SpecIcon = SPEC_ICONS[key.toLowerCase()];
                                 return (
-                                    <div key={key} className="rounded-xl border bg-card p-4">
+                                    <div key={key} className="rounded-xl border bg-card p-3 sm:p-4">
                                         <div className="flex items-center gap-2">
                                             {SpecIcon && <SpecIcon className="h-4 w-4 text-red-500" />}
                                             <div className="text-xs font-medium uppercase text-muted-foreground">{key}</div>
@@ -145,7 +146,7 @@ export default async function CarDetailsPage({ params }: { params: Promise<{ id:
                 {/* Sidebar */}
                 <div className="space-y-6">
                     {/* Action Card */}
-                    <div className="rounded-2xl border bg-white p-6 shadow-lg">
+                    <div className="rounded-2xl border bg-card p-6 shadow-lg">
                         <div className="mb-6 flex items-center gap-3">
                             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
                                 <MessageCircle className="h-5 w-5 text-green-600" />
@@ -171,7 +172,11 @@ export default async function CarDetailsPage({ params }: { params: Promise<{ id:
                             <div className="flex-grow border-t border-border"></div>
                         </div>
 
-                        <ClientBookingWrapper carId={car.id} carName={car.name} />
+                        <ClientBookingWrapper
+                            carId={car.id}
+                            carName={car.name}
+                            pricePerDay={car.price_per_day}
+                        />
 
                         <p className="mt-4 text-center text-xs text-muted-foreground">
                             Instant response time. No hidden fees.

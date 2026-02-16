@@ -35,6 +35,7 @@ def seed_data():
                     ],
                     "brand_logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Dacia_Logo_2021.svg/200px-Dacia_Logo_2021.svg.png",
                     "is_active": True,
+                    "price_per_day": 300
                 },
                 {
                     "name": "Renault Clio 5",
@@ -45,6 +46,7 @@ def seed_data():
                     ],
                     "brand_logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Renault_2021.svg/200px-Renault_2021.svg.png",
                     "is_active": True,
+                    "price_per_day": 350
                 },
                 {
                     "name": "Peugeot 3008",
@@ -55,6 +57,7 @@ def seed_data():
                     ],
                     "brand_logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Peugeot_2021_Logo.svg/200px-Peugeot_2021_Logo.svg.png",
                     "is_active": True,
+                    "price_per_day": 600
                 },
                 {
                     "name": "BMW X5 xDrive",
@@ -65,6 +68,7 @@ def seed_data():
                     ],
                     "brand_logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BMW.svg/200px-BMW.svg.png",
                     "is_active": True,
+                    "price_per_day": 1200
                 },
                 {
                     "name": "Mercedes-Benz Classe C",
@@ -75,6 +79,7 @@ def seed_data():
                     ],
                     "brand_logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Mercedes-Logo.svg/200px-Mercedes-Logo.svg.png",
                     "is_active": True,
+                    "price_per_day": 1500
                 },
                 {
                     "name": "Audi A6 Quattro",
@@ -85,6 +90,7 @@ def seed_data():
                     ],
                     "brand_logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Audi-Logo_2016.svg/200px-Audi-Logo_2016.svg.png",
                     "is_active": True,
+                    "price_per_day": 1400
                 },
                 {
                     "name": "Volkswagen T-Roc",
@@ -95,6 +101,7 @@ def seed_data():
                     ],
                     "brand_logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Volkswagen_logo_2019.svg/200px-Volkswagen_logo_2019.svg.png",
                     "is_active": True,
+                    "price_per_day": 550
                 },
                 {
                     "name": "Hyundai Tucson",
@@ -105,6 +112,7 @@ def seed_data():
                     ],
                     "brand_logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Hyundai_Motor_Company_logo.svg/200px-Hyundai_Motor_Company_logo.svg.png",
                     "is_active": True,
+                    "price_per_day": 500
                 },
                 {
                     "name": "Mercedes-Benz Vito Tourer",
@@ -115,6 +123,7 @@ def seed_data():
                     ],
                     "brand_logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Mercedes-Logo.svg/200px-Mercedes-Logo.svg.png",
                     "is_active": True,
+                    "price_per_day": 1000
                 },
             ]
 
@@ -127,6 +136,7 @@ def seed_data():
                     images=cd["images"],
                     brand_logo=cd["brand_logo"],
                     is_active=cd["is_active"],
+                    price_per_day=cd["price_per_day"]
                 )
                 db.session.add(car)
                 cars.append(car)
@@ -261,6 +271,7 @@ def seed_data():
                     customer_email=bd["customer_email"],
                     customer_phone=bd["customer_phone"],
                     customer_details=bd["customer_details"],
+                    total_price=(bd["end"] - bd["start"]).days * car.price_per_day
                 )
                 db.session.add(booking)
 
