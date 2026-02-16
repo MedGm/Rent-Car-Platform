@@ -13,5 +13,8 @@ from app import create_app, db
 app = create_app()
 
 # Auto-create tables on cold start (no alembic on serverless)
-with app.app_context():
-    db.create_all()
+try:
+    with app.app_context():
+        db.create_all()
+except Exception as e:
+    print(f"[Vercel] Warning: db.create_all() failed: {e}")

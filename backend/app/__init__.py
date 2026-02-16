@@ -15,19 +15,16 @@ def create_app(config_class=Config):
     db.init_app(app)
     migrate.init_app(app, db)
 
-    # Dynamic CORS: allow configured origins + localhost for dev
-    allowed_origins = [
-        "http://localhost:3000",
-    ]
+    # CORS: allow all origins on Vercel (serverless), restrict in Docker
     frontend_url = os.environ.get("FRONTEND_URL")
-    if frontend_url:
-        allowed_origins.append(frontend_url)
-        # Also allow the Vercel preview URLs for the same project
-        if ".vercel.app" in frontend_url:
-            # e.g. misters-drivers.vercel.app → also allow misters-drivers-*.vercel.app
-            base = frontend_url.split("//")[1].split(".")[0]  # project name
-            allowed_origins.append(f"https://{base}-*.vercel.app")
-    CORS(app, resources={r"/api/*": {"origins": allowed_origins}})
+    if os.environ.get("VERCEL"):
+        # On Vercel, allow all origins (headers also set in vercel.json)
+        CORS(app, resources={r"/api/*": {"origins": "*"}})
+    else:
+        allowed_origins = ["http://localhost:3000"]
+        if frontend_url:
+            allowed_origins.append(frontend_url)
+        CORS(app, resources={r"/api/*": {"origins": allowed_origins}})
 
     from app import models
     from app.auth import auth_bp
@@ -43,6 +40,20 @@ def create_app(config_class=Config):
     app.register_blueprint(contracts_bp, url_prefix='/api/contracts')
     app.register_blueprint(articles_bp, url_prefix='/api/articles')
     app.register_blueprint(services_bp, url_prefix='/api/services')
+
+    # Health check endpoint
+    @app.route('/api/health')
+    def health():
+        try:
+            db.session.execute(db.text('SELECT 1'))
+            db_status = 'connected'
+        except Exception as e:
+            db_status = f'error: {str(e)}'
+        return {
+            'status': 'ok',
+            'database': db_status,
+            'db_uri_prefix': app.config['SQLALCHEMY_DATABASE_URI'][:30] + '...',
+        }
 
     # Serve static files (uploads) in development
     import os
