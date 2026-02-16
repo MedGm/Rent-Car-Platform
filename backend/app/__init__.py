@@ -56,7 +56,6 @@ def create_app(config_class=Config):
         }
 
     # Serve static files (uploads) in development
-    import os
     from flask import send_from_directory
 
     @app.route('/static/uploads/<path:filename>')
