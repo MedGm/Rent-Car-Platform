@@ -1,5 +1,5 @@
 from app import create_app, db
-from app.models import User, Car, Booking, CalendarBlock, Article, Service
+from app.models import User, Car, Booking, CalendarBlock, Article, Service, Contract
 from werkzeug.security import generate_password_hash
 from datetime import datetime, date, timedelta
 import json
@@ -22,286 +22,80 @@ def seed_data():
             db.session.add(admin)
             db.session.flush()
 
-        # ── Cars ──────────────────────────────────────────────────
-        if Car.query.count() == 0:
-            print("Creating cars...")
-            cars_data = [
-                {
-                    "name": "Dacia Logan",
-                    "category": "Sedan",
-                    "specs": {"seats": 5, "fuel": "Diesel", "transmission": "Manual"},
-                    "images": [
-                        "https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&w=800&q=80",
-                    ],
-                    "brand_logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Dacia_Logo_2021.svg/200px-Dacia_Logo_2021.svg.png",
-                    "is_active": True,
-                    "price_per_day": 300
-                },
-                {
-                    "name": "Renault Clio 5",
-                    "category": "Sedan",
-                    "specs": {"seats": 5, "fuel": "Petrol", "transmission": "Automatic"},
-                    "images": [
-                        "https://images.unsplash.com/photo-1619767886558-efdc7b9af5a1?auto=format&fit=crop&w=800&q=80",
-                    ],
-                    "brand_logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Renault_2021.svg/200px-Renault_2021.svg.png",
-                    "is_active": True,
-                    "price_per_day": 350
-                },
-                {
-                    "name": "Peugeot 3008",
-                    "category": "SUV",
-                    "specs": {"seats": 5, "fuel": "Diesel", "transmission": "Automatic"},
-                    "images": [
-                        "https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&w=800&q=80",
-                    ],
-                    "brand_logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Peugeot_2021_Logo.svg/200px-Peugeot_2021_Logo.svg.png",
-                    "is_active": True,
-                    "price_per_day": 600
-                },
-                {
-                    "name": "BMW X5 xDrive",
-                    "category": "SUV",
-                    "specs": {"seats": 7, "fuel": "Diesel", "transmission": "Automatic"},
-                    "images": [
-                        "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80",
-                    ],
-                    "brand_logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/BMW.svg/200px-BMW.svg.png",
-                    "is_active": True,
-                    "price_per_day": 1200
-                },
-                {
-                    "name": "Mercedes-Benz Classe C",
-                    "category": "Luxury",
-                    "specs": {"seats": 5, "fuel": "Petrol", "transmission": "Automatic"},
-                    "images": [
-                        "https://images.unsplash.com/photo-1617788138017-80ad40651399?auto=format&fit=crop&w=800&q=80",
-                    ],
-                    "brand_logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Mercedes-Logo.svg/200px-Mercedes-Logo.svg.png",
-                    "is_active": True,
-                    "price_per_day": 1500
-                },
-                {
-                    "name": "Audi A6 Quattro",
-                    "category": "Luxury",
-                    "specs": {"seats": 5, "fuel": "Diesel", "transmission": "Automatic"},
-                    "images": [
-                        "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=800&q=80",
-                    ],
-                    "brand_logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Audi-Logo_2016.svg/200px-Audi-Logo_2016.svg.png",
-                    "is_active": True,
-                    "price_per_day": 1400
-                },
-                {
-                    "name": "Volkswagen T-Roc",
-                    "category": "SUV",
-                    "specs": {"seats": 5, "fuel": "Petrol", "transmission": "Automatic"},
-                    "images": [
-                        "https://images.unsplash.com/photo-1625753783222-4ea1c3223e32?auto=format&fit=crop&w=800&q=80",
-                    ],
-                    "brand_logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Volkswagen_logo_2019.svg/200px-Volkswagen_logo_2019.svg.png",
-                    "is_active": True,
-                    "price_per_day": 550
-                },
-                {
-                    "name": "Hyundai Tucson",
-                    "category": "SUV",
-                    "specs": {"seats": 5, "fuel": "Diesel", "transmission": "Automatic"},
-                    "images": [
-                        "https://images.unsplash.com/photo-1609521263047-f8f205293f24?auto=format&fit=crop&w=800&q=80",
-                    ],
-                    "brand_logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Hyundai_Motor_Company_logo.svg/200px-Hyundai_Motor_Company_logo.svg.png",
-                    "is_active": True,
-                    "price_per_day": 500
-                },
-                {
-                    "name": "Mercedes-Benz Vito Tourer",
-                    "category": "Van",
-                    "specs": {"seats": 9, "fuel": "Diesel", "transmission": "Automatic"},
-                    "images": [
-                        "https://images.unsplash.com/photo-1559416523-140ddc3d238c?auto=format&fit=crop&w=800&q=80",
-                    ],
-                    "brand_logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Mercedes-Logo.svg/200px-Mercedes-Logo.svg.png",
-                    "is_active": True,
-                    "price_per_day": 1000
-                },
-            ]
+        # ── Cleanup (Reset Fleet & Bookings) ──────────────────────
+        print("Cleaning up existing fleet and bookings...")
+        db.session.query(Contract).delete()
+        db.session.query(CalendarBlock).delete()
+        db.session.query(Booking).delete()
+        db.session.query(Car).delete()
+        db.session.commit()
 
-            cars = []
-            for cd in cars_data:
-                car = Car(
-                    name=cd["name"],
-                    category=cd["category"],
-                    specs=cd["specs"],
-                    images=cd["images"],
-                    brand_logo=cd["brand_logo"],
-                    is_active=cd["is_active"],
-                    price_per_day=cd["price_per_day"]
-                )
-                db.session.add(car)
-                cars.append(car)
-            db.session.flush()
-            print(f"  Created {len(cars)} cars")
+        # ── New Cars ──────────────────────────────────────────────
+        print("Seeding new fleet...")
+        cars_data = [
+            {
+                "name": "Hyundai i10 Essence",
+                "category": "Economy",
+                "specs": {"seats": 5, "fuel": "Essence", "transmission": "Manuelle"},
+                "images": [],
+                "brand_logo": "",
+                "is_active": True,
+                "price_per_day": 250
+            },
+            {
+                "name": "Hyundai Grand i10 Essence",
+                "category": "Economy",
+                "specs": {"seats": 5, "fuel": "Essence", "transmission": "Automatique"},
+                "images": [],
+                "brand_logo": "",
+                "is_active": True,
+                "price_per_day": 350
+            },
+            {
+                "name": "Nissan Magnite Essence (Gris)",
+                "category": "SUV",
+                "specs": {"seats": 5, "fuel": "Essence", "transmission": "Manuelle"},
+                "images": [],
+                "brand_logo": "",
+                "is_active": True,
+                "price_per_day": 450
+            },
+            {
+                "name": "Nissan Magnite Essence (Orange)",
+                "category": "SUV",
+                "specs": {"seats": 5, "fuel": "Essence", "transmission": "Manuelle"},
+                "images": [],
+                "brand_logo": "",
+                "is_active": True,
+                "price_per_day": 450
+            },
+            {
+                "name": "BYD Seagull Électrique Automatique",
+                "category": "Électrique",
+                "specs": {"seats": 4, "fuel": "Électrique", "transmission": "Automatique", "options": "Toute options"},
+                "images": [],
+                "brand_logo": "",
+                "is_active": True,
+                "price_per_day": 500
+            }
+        ]
 
-        # ── Bookings & Calendar Blocks ────────────────────────────
-        if Booking.query.count() == 0:
-            print("Creating bookings...")
-            cars = Car.query.all()
-            today = date.today()
+        for cd in cars_data:
+            car = Car(
+                name=cd["name"],
+                category=cd["category"],
+                specs=cd["specs"],
+                images=cd["images"],
+                brand_logo=cd["brand_logo"],
+                is_active=cd["is_active"],
+                price_per_day=cd["price_per_day"]
+            )
+            db.session.add(car)
+        db.session.flush()
+        print(f"  Created {len(cars_data)} new cars")
 
-            bookings_data = [
-                # Past completed booking
-                {
-                    "car_idx": 0,
-                    "start": today - timedelta(days=15),
-                    "end": today - timedelta(days=10),
-                    "status": "confirmed",
-                    "customer_name": "Youssef El Amrani",
-                    "customer_email": "youssef.amrani@gmail.com",
-                    "customer_phone": "+212661234567",
-                    "customer_details": {
-                        "cin": "JB 504321",
-                        "permis": "M-234567",
-                        "address": "123 Bd Hassan II, Casablanca",
-                        "city": "Casablanca",
-                        "nationality": "Marocaine",
-                        "birth_date": "1990-05-12",
-                    },
-                },
-                # Active booking (ongoing)
-                {
-                    "car_idx": 3,
-                    "start": today - timedelta(days=2),
-                    "end": today + timedelta(days=5),
-                    "status": "confirmed",
-                    "customer_name": "Pierre Dupont",
-                    "customer_email": "pierre.dupont@orange.fr",
-                    "customer_phone": "+33612345678",
-                    "customer_details": {
-                        "cin": "FR-12345678",
-                        "permis": "09AX12345",
-                        "address": "45 Rue de Rivoli, Paris",
-                        "city": "Paris",
-                        "nationality": "Française",
-                        "birth_date": "1985-08-22",
-                    },
-                },
-                # Upcoming booking
-                {
-                    "car_idx": 4,
-                    "start": today + timedelta(days=3),
-                    "end": today + timedelta(days=10),
-                    "status": "confirmed",
-                    "customer_name": "Fatima Zahra Benali",
-                    "customer_email": "fatima.benali@hotmail.com",
-                    "customer_phone": "+212677889900",
-                    "customer_details": {
-                        "cin": "BK 789012",
-                        "permis": "R-345678",
-                        "address": "Hay Mohammadi, Agadir",
-                        "city": "Agadir",
-                        "nationality": "Marocaine",
-                        "birth_date": "1992-11-03",
-                    },
-                },
-                # Upcoming booking
-                {
-                    "car_idx": 1,
-                    "start": today + timedelta(days=7),
-                    "end": today + timedelta(days=14),
-                    "status": "pending",
-                    "customer_name": "John Smith",
-                    "customer_email": "john.smith@gmail.com",
-                    "customer_phone": "+447911123456",
-                    "customer_details": {
-                        "cin": "GB-98765432",
-                        "permis": "SMITH906152J99",
-                        "address": "10 Downing St, London",
-                        "city": "London",
-                        "nationality": "Britannique",
-                        "birth_date": "1988-06-15",
-                    },
-                },
-                # Far future booking
-                {
-                    "car_idx": 6,
-                    "start": today + timedelta(days=20),
-                    "end": today + timedelta(days=27),
-                    "status": "pending",
-                    "customer_name": "Ahmed Tazi",
-                    "customer_email": "ahmed.tazi@yahoo.com",
-                    "customer_phone": "+212655443322",
-                    "customer_details": {
-                        "cin": "SH 112233",
-                        "permis": "A-567890",
-                        "address": "Quartier Industriel, Marrakech",
-                        "city": "Marrakech",
-                        "nationality": "Marocaine",
-                        "birth_date": "1995-02-28",
-                    },
-                },
-                # Cancelled booking
-                {
-                    "car_idx": 2,
-                    "start": today + timedelta(days=1),
-                    "end": today + timedelta(days=4),
-                    "status": "cancelled",
-                    "customer_name": "Maria Garcia",
-                    "customer_email": "maria.garcia@correo.es",
-                    "customer_phone": "+34612345678",
-                    "customer_details": {
-                        "cin": "ES-X1234567Z",
-                        "permis": "B-1234567",
-                        "address": "Calle Mayor 5, Madrid",
-                        "city": "Madrid",
-                        "nationality": "Espagnole",
-                        "birth_date": "1993-07-19",
-                    },
-                },
-            ]
-
-            for bd in bookings_data:
-                car = cars[bd["car_idx"]] if bd["car_idx"] < len(cars) else cars[0]
-                booking = Booking(
-                    car_id=car.id,
-                    start_date=bd["start"],
-                    end_date=bd["end"],
-                    status=bd["status"],
-                    customer_name=bd["customer_name"],
-                    customer_email=bd["customer_email"],
-                    customer_phone=bd["customer_phone"],
-                    customer_details=bd["customer_details"],
-                    total_price=(bd["end"] - bd["start"]).days * car.price_per_day
-                )
-                db.session.add(booking)
-
-                # Create calendar block for non-cancelled bookings
-                if bd["status"] != "cancelled":
-                    block = CalendarBlock(
-                        car_id=car.id,
-                        start_date=bd["start"],
-                        end_date=bd["end"],
-                        reason="booking",
-                    )
-                    db.session.add(block)
-
-            # Maintenance blocks
-            maintenance_blocks = [
-                {"car_idx": 5, "start": today + timedelta(days=1), "end": today + timedelta(days=3), "reason": "maintenance"},
-                {"car_idx": 7, "start": today + timedelta(days=10), "end": today + timedelta(days=12), "reason": "maintenance"},
-            ]
-            for mb in maintenance_blocks:
-                car = cars[mb["car_idx"]] if mb["car_idx"] < len(cars) else cars[0]
-                block = CalendarBlock(
-                    car_id=car.id,
-                    start_date=mb["start"],
-                    end_date=mb["end"],
-                    reason=mb["reason"],
-                )
-                db.session.add(block)
-
-            db.session.flush()
-            print(f"  Created {len(bookings_data)} bookings + calendar blocks")
+        # ── Bookings & Calendar Blocks (Skipped for fresh start) ──
+        print("Booking archive cleared.")
 
         # ── Articles ──────────────────────────────────────────────
         if Article.query.count() == 0:

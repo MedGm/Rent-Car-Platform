@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { CarCard } from "@/components/CarCard";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { useLanguage } from "@/lib/i18n";
 
 interface Car {
     id: number;
@@ -19,6 +20,7 @@ interface Car {
 export function FeaturedCars() {
     const [cars, setCars] = useState<Car[]>([]);
     const [loading, setLoading] = useState(true);
+    const { t } = useLanguage();
 
     useEffect(() => {
         async function fetchCars() {
@@ -44,13 +46,13 @@ export function FeaturedCars() {
                 {/* Section Header */}
                 <div className="mb-12 text-center">
                     <span className="inline-block rounded-full bg-primary/10 dark:bg-primary/20 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary mb-4">
-                        Notre Flotte
+                        {t.featured_badge}
                     </span>
                     <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl text-foreground">
-                        Featured <span className="text-primary">Cars</span>
+                        {t.featured_title_1} <span className="text-primary">{t.featured_title_2}</span>
                     </h2>
                     <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
-                        Explore our premium fleet of vehicles, each carefully selected for comfort, reliability, and performance.
+                        {t.featured_desc}
                     </p>
                 </div>
 
@@ -78,7 +80,7 @@ export function FeaturedCars() {
                         href="/cars"
                         className="inline-flex h-12 items-center justify-center rounded-full border-2 border-primary bg-transparent px-8 text-sm font-bold text-primary transition-all hover:bg-primary hover:text-white hover:scale-105"
                     >
-                        View All Cars <ArrowRight className="ml-2 h-4 w-4" />
+                        {t.featured_view_all} <ArrowRight className="ms-2 h-4 w-4" />
                     </Link>
                 </div>
             </div>

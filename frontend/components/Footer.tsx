@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Facebook, Instagram, Phone, Mail, MapPin } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
+import { useLanguage } from "@/lib/i18n";
 
 function LeafletMap() {
     const mapRef = useRef<HTMLDivElement>(null);
@@ -14,6 +15,9 @@ function LeafletMap() {
 
         const loadMap = async () => {
             const L = (await import("leaflet")).default;
+
+            // Component may have unmounted during async import
+            if (!mapRef.current) return;
 
             // Inject leaflet CSS
             if (!document.getElementById("leaflet-css")) {
@@ -64,12 +68,13 @@ function LeafletMap() {
 }
 
 export function Footer() {
+    const { t } = useLanguage();
     return (
         <footer className="bg-black dark:bg-[#0a0000] text-white pt-16 pb-8" id="contact">
             <div className="container mx-auto px-6 sm:px-4">
                 <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4 mb-16">
                     {/* Brand & About */}
-                    <div className="flex flex-col items-center md:items-start text-center md:text-left space-y-4">
+                    <div className="flex flex-col items-center md:items-start text-center md:text-start space-y-4">
                         <div className="relative h-10 w-40">
                             <Image
                                 src="/logo.png"
@@ -79,8 +84,7 @@ export function Footer() {
                             />
                         </div>
                         <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
-                            Agence de location de voitures à Agadir. Service premium, flotte variée et assistance 24h/24.
-                            Votre partenaire de mobilité au Maroc.
+                            {t.footer_about}
                         </p>
                         <div className="flex gap-4">
                             <Link href="https://www.facebook.com/profile.php?id=61561026257498" target="_blank" className="text-gray-400 hover:text-primary transition-colors p-2 -m-2">
@@ -93,24 +97,24 @@ export function Footer() {
                     </div>
 
                     {/* Quick Links */}
-                    <div className="text-center md:text-left">
-                        <h4 className="font-bold text-lg mb-6">Liens Rapides</h4>
+                    <div className="text-center md:text-start">
+                        <h4 className="font-bold text-lg mb-6">{t.footer_quick_links}</h4>
                         <ul className="space-y-3 text-gray-400 text-sm">
-                            <li><Link href="/" className="hover:text-white transition-colors block py-1">Accueil</Link></li>
-                            <li><Link href="/cars" className="hover:text-white transition-colors block py-1">Notre Flotte</Link></li>
-                            <li><Link href="/#services" className="hover:text-white transition-colors block py-1">Services</Link></li>
-                            <li><Link href="/#articles" className="hover:text-white transition-colors block py-1">Articles</Link></li>
-                            <li><Link href="#contact" className="hover:text-white transition-colors block py-1">Contact</Link></li>
+                            <li><Link href="/" className="hover:text-white transition-colors block py-1">{t.footer_home}</Link></li>
+                            <li><Link href="/cars" className="hover:text-white transition-colors block py-1">{t.footer_fleet}</Link></li>
+                            <li><Link href="/#services" className="hover:text-white transition-colors block py-1">{t.footer_services}</Link></li>
+                            <li><Link href="/#articles" className="hover:text-white transition-colors block py-1">{t.footer_articles}</Link></li>
+                            <li><Link href="#contact" className="hover:text-white transition-colors block py-1">{t.footer_contact}</Link></li>
                         </ul>
                     </div>
 
                     {/* Contact Info */}
-                    <div className="text-center md:text-left">
-                        <h4 className="font-bold text-lg mb-6">Contact</h4>
+                    <div className="text-center md:text-start">
+                        <h4 className="font-bold text-lg mb-6">{t.footer_contact_heading}</h4>
                         <ul className="space-y-4 text-gray-400 text-sm">
                             <li className="flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-3">
                                 <MapPin className="h-5 w-5 text-primary shrink-0" />
-                                <span>Mag N° AH 545, Cité El Qods, Agadir, Maroc</span>
+                                <span>{t.footer_address}</span>
                             </li>
                             <li className="flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-3">
                                 <Phone className="h-5 w-5 text-primary shrink-0" />
@@ -129,8 +133,8 @@ export function Footer() {
                     </div>
 
                     {/* Map */}
-                    <div className="text-center md:text-left">
-                        <h4 className="font-bold text-lg mb-6">Nous Trouver</h4>
+                    <div className="text-center md:text-start">
+                        <h4 className="font-bold text-lg mb-6">{t.footer_find_us}</h4>
                         <div className="h-32 sm:h-40 w-full rounded-xl overflow-hidden ring-1 ring-white/10">
                             <LeafletMap />
                         </div>
@@ -139,7 +143,7 @@ export function Footer() {
                 </div>
 
                 <div className="border-t border-gray-800 pt-8 text-center text-sm text-gray-500">
-                    &copy; {new Date().getFullYear()} Misters Drivers. Tous droits réservés.
+                    &copy; {new Date().getFullYear()} Misters Drivers. {t.footer_rights}
                 </div>
             </div>
         </footer>

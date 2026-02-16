@@ -297,7 +297,7 @@ export function BookingForm({ carId, carName, pricePerDay, isOpen, onClose }: Bo
 
                             <Button type="submit" disabled={loading || dateConflict}
                                 className="w-full h-12 text-base font-bold bg-primary hover:bg-primary/90 mt-2 disabled:opacity-50">
-                                {loading ? "Submitting..." : dateConflict ? "Dates Unavailable" : "Submit Request"} <Calendar className="ml-2 h-4 w-4" />
+                                {loading ? "Submitting..." : dateConflict ? "Dates Unavailable" : "Submit Request"} <Calendar className="ms-2 h-4 w-4" />
                             </Button>
                         </form>
                     )}

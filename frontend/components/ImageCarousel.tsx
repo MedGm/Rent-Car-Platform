@@ -15,8 +15,13 @@ export function ImageCarousel({ images, alt }: ImageCarouselProps) {
 
     if (!images || images.length === 0) {
         return (
-            <div className="aspect-square w-full rounded-2xl bg-muted flex items-center justify-center text-muted-foreground">
-                No images available
+            <div className="relative aspect-square w-full rounded-2xl bg-muted overflow-hidden">
+                <Image
+                    src="/placehoder-car.png"
+                    alt="No images available"
+                    fill
+                    className="object-cover"
+                />
             </div>
         );
     }
@@ -47,21 +52,21 @@ export function ImageCarousel({ images, alt }: ImageCarouselProps) {
                     <>
                         <button
                             onClick={prev}
-                            className="absolute left-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-neutral-800 shadow-lg backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
+                            className="absolute start-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-neutral-800 shadow-lg backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
                             aria-label="Previous image"
                         >
                             <ChevronLeft className="h-5 w-5" />
                         </button>
                         <button
                             onClick={next}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-neutral-800 shadow-lg backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
+                            className="absolute end-3 top-1/2 -translate-y-1/2 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-neutral-800 shadow-lg backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
                             aria-label="Next image"
                         >
                             <ChevronRight className="h-5 w-5" />
                         </button>
 
                         {/* Image counter */}
-                        <div className="absolute bottom-3 right-3 rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
+                        <div className="absolute bottom-3 end-3 rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
                             {current + 1} / {images.length}
                         </div>
                     </>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { LanguageProvider } from "@/lib/i18n";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -9,9 +10,9 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "Misters Drivers — Location de Voitures à Agadir",
+  title: "Misters Drivers — Car Rental in Agadir",
   description:
-    "Location de voitures premium à Agadir. Flotte variée, livraison aéroport, assistance 24h/24. Réservez votre véhicule en ligne.",
+    "Premium car rental in Agadir. Varied fleet, airport delivery, 24/7 assistance. Book your vehicle online.",
 };
 
 export default function RootLayout({
@@ -20,9 +21,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <body className={`${outfit.variable} font-sans antialiased`}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <LanguageProvider>{children}</LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

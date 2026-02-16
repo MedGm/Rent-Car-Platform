@@ -2,20 +2,31 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { Menu, X, Sun, Moon, Globe, ChevronDown } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
+import { useLanguage, Locale } from "@/lib/i18n";
 
-const NAV_LINKS = [
-    { label: "Cars", href: "#cars" },
-    { label: "Services", href: "#services" },
-    { label: "Articles", href: "#articles" },
-    { label: "Contact", href: "#contact" },
+const LANGUAGES: { code: Locale; label: string; flag: string }[] = [
+    { code: "fr", label: "Français", flag: "🇫🇷" },
+    { code: "en", label: "English", flag: "🇬🇧" },
+    { code: "ar", label: "العربية", flag: "🇲🇦" },
 ];
 
 export function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [langOpen, setLangOpen] = useState(false);
     const { theme, toggleTheme } = useTheme();
+    const { locale, setLocale, t } = useLanguage();
+
+    const NAV_LINKS = [
+        { label: t.nav_cars, href: "#cars" },
+        { label: t.nav_services, href: "#services" },
+        { label: t.nav_articles, href: "#articles" },
+        { label: t.nav_contact, href: "#contact" },
+    ];
+
+    const whatsappUrl = `https://wa.me/212671920545?text=${encodeURIComponent(t.whatsapp_message)}`;
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 60);
@@ -37,7 +48,7 @@ export function Navbar() {
     return (
         <>
             <nav
-                className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
+                className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${scrolled
                     ? "bg-background/90 backdrop-blur-xl shadow-lg shadow-black/5 dark:shadow-black/30 border-b border-border"
                     : "bg-transparent"
                     }`}
@@ -77,6 +88,44 @@ export function Navbar() {
 
                     {/* Actions */}
                     <div className="flex items-center gap-2 sm:gap-3">
+                        {/* Language selector */}
+                        <div className="relative">
+                            <button
+                                onClick={() => setLangOpen(!langOpen)}
+                                aria-label="Select language"
+                                className={`flex h-9 items-center gap-1.5 rounded-full px-2.5 transition-colors text-xs font-bold uppercase ${scrolled
+                                    ? "text-foreground/70 hover:bg-accent hover:text-foreground"
+                                    : "text-white/80 hover:bg-white/10 hover:text-white"
+                                    }`}
+                            >
+                                <Globe className="h-[16px] w-[16px]" />
+                                {LANGUAGES.find(l => l.code === locale)?.flag}
+                                <ChevronDown className={`h-3 w-3 transition-transform ${langOpen ? "rotate-180" : ""}`} />
+                            </button>
+                            {langOpen && (
+                                <>
+                                    <div className="fixed inset-0 z-40" onClick={() => setLangOpen(false)} />
+                                    <div className="absolute end-0 top-full mt-2 z-50 min-w-[160px] rounded-xl border border-border bg-background/95 backdrop-blur-xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                                        {LANGUAGES.map((lang) => (
+                                            <button
+                                                key={lang.code}
+                                                onClick={() => { setLocale(lang.code); setLangOpen(false); }}
+                                                className={`flex w-full items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent ${
+                                                    locale === lang.code ? "bg-accent/50 font-semibold text-primary" : "text-foreground/80"
+                                                }`}
+                                            >
+                                                <span className="text-base">{lang.flag}</span>
+                                                {lang.label}
+                                                {locale === lang.code && (
+                                                    <span className="ml-auto text-primary">✓</span>
+                                                )}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+                        </div>
+
                         {/* Dark mode toggle */}
                         <button
                             onClick={toggleTheme}
@@ -95,11 +144,11 @@ export function Navbar() {
 
                         {/* Book Now CTA */}
                         <Link
-                            href="https://wa.me/212671920545?text=Bonjour%2C%20je%20souhaite%20r%C3%A9server%20un%20v%C3%A9hicule."
+                            href={whatsappUrl}
                             target="_blank"
                             className="hidden sm:inline-flex h-10 items-center justify-center rounded-full bg-primary px-6 text-sm font-bold text-white shadow-lg shadow-red-600/25 transition-all hover:scale-105 hover:bg-red-600 hover:shadow-red-600/40 active:scale-100"
                         >
-                            Book Now
+                            {t.nav_book_now}
                         </Link>
 
                         {/* Mobile menu toggle */}
@@ -126,7 +175,7 @@ export function Navbar() {
                         onClick={() => setMobileOpen(false)}
                     />
                     {/* Panel */}
-                    <div className="absolute right-0 top-0 h-full w-72 bg-background border-l border-border shadow-2xl p-6 pt-24 flex flex-col gap-2 animate-in slide-in-from-right">
+                    <div className="absolute end-0 top-0 h-full w-72 bg-background border-s border-border shadow-2xl p-6 pt-24 flex flex-col gap-2 animate-in slide-in-from-right">
                         {NAV_LINKS.map((link) => (
                             <a
                                 key={link.href}
@@ -139,12 +188,12 @@ export function Navbar() {
                         ))}
                         <div className="mt-4 pt-4 border-t border-border">
                             <Link
-                                href="https://wa.me/212671920545?text=Bonjour%2C%20je%20souhaite%20r%C3%A9server%20un%20v%C3%A9hicule."
+                                href={whatsappUrl}
                                 target="_blank"
                                 className="flex h-12 items-center justify-center rounded-full bg-primary px-6 text-base font-bold text-white shadow-lg shadow-red-600/25 transition-all hover:bg-red-600"
                                 onClick={() => setMobileOpen(false)}
                             >
-                                Book Now
+                                {t.nav_book_now}
                             </Link>
                         </div>
                     </div>

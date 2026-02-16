@@ -2,51 +2,20 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Star, ChevronLeft, ChevronRight, Quote, CheckCircle2 } from "lucide-react";
-
-interface Review {
-    id: number;
-    name: string;
-    rating: number;
-    date: string;
-    text: string;
-    avatar?: string;
-}
-
-const MOCK_REVIEWS: Review[] = [
-    {
-        id: 1,
-        name: "Amine El Fassi",
-        rating: 5,
-        date: "il y a 2 semaines",
-        text: "Service exceptionnel ! La voiture était impeccable et livrée à l'heure à l'aéroport d'Agadir. Je recommande vivement Misters Drivers pour leur professionnalisme.",
-    },
-    {
-        id: 2,
-        name: "Sarah Johnson",
-        rating: 5,
-        date: "il y a 1 mois",
-        text: "The best car rental experience in Morocco. Zero friction, clear pricing, and the car was nearly new. 5 stars all the way!",
-    },
-    {
-        id: 3,
-        name: "Karim Bennani",
-        rating: 5,
-        date: "il y a 2 mois",
-        text: "Équipe très réactive et à l'écoute. J'ai loué une BMW X5 pour un voyage d'affaires et tout était parfait. Le rapport qualité-prix est imbattable.",
-    },
-    {
-        id: 4,
-        name: "Thomas Dubois",
-        rating: 5,
-        date: "il y a 3 semaines",
-        text: "Location simple et rapide. Pas de frais cachés. C'est agréable de trouver une agence aussi transparente à Agadir.",
-    },
-];
+import { useLanguage } from "@/lib/i18n";
 
 export function GoogleReviews() {
     const scrollRef = useRef<HTMLDivElement>(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
+    const { t } = useLanguage();
+
+    const MOCK_REVIEWS = [
+        { id: 1, name: "Amine El Fassi", rating: 5, date: t.review_1_date, text: t.review_1_text },
+        { id: 2, name: "Sarah Johnson", rating: 5, date: t.review_2_date, text: t.review_2_text },
+        { id: 3, name: "Karim Bennani", rating: 5, date: t.review_3_date, text: t.review_3_text },
+        { id: 4, name: "Thomas Dubois", rating: 5, date: t.review_4_date, text: t.review_4_text },
+    ];
 
     const checkScroll = () => {
         const el = scrollRef.current;
@@ -82,22 +51,22 @@ export function GoogleReviews() {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-primary/5 rounded-full blur-3xl -z-10 pointer-events-none" />
 
             <div className="container mx-auto px-6 sm:px-4">
-                <div className="flex flex-col items-center text-center md:flex-row md:items-end md:justify-between md:text-left gap-8 mb-16">
+                <div className="flex flex-col items-center text-center md:flex-row md:items-end md:justify-between md:text-start gap-8 mb-16">
                     <div className="max-w-2xl">
-                        <div className="flex flex-wrap justify-center md:justify-start items-center gap-2 mb-6">
+                        <div className="flex flex-wrap justify-center md:justify-start items-center gap-2 mb-6" dir="ltr">
                             <span className="inline-block rounded-full bg-primary/10 dark:bg-primary/20 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary">
-                                Avis Clients
+                                {t.reviews_badge}
                             </span>
                             <div className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-bold ring-1 ring-green-500/20">
                                 <CheckCircle2 className="h-3.5 w-3.5" />
-                                Vérifié sur Google
+                                {t.reviews_verified_google}
                             </div>
                         </div>
                         <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl text-foreground leading-tight">
-                            Ce que disent nos <span className="text-primary">Voyageurs</span>
+                            {t.reviews_title_1} <span className="text-primary">{t.reviews_title_2}</span>
                         </h2>
-                        <p className="mt-4 text-muted-foreground text-base sm:text-lg max-w-xl mx-auto md:mx-0">
-                            La confiance est au cœur de notre service. Découvrez pourquoi nos clients nous choisissent pour leurs déplacements à Agadir.
+                        <p className="mt-4 text-muted-foreground text-base sm:text-lg max-w-xl mx-auto md:ms-0">
+                            {t.reviews_desc}
                         </p>
                     </div>
 
@@ -143,7 +112,7 @@ export function GoogleReviews() {
                             key={review.id}
                             className="flex flex-col min-w-[calc(100vw-4.5rem)] xs:min-w-[320px] sm:min-w-[400px] max-w-[450px] flex-shrink-0 snap-start p-6 sm:p-8 rounded-3xl border border-border bg-card shadow-sm relative group transition-all hover:shadow-xl hover:-translate-y-1"
                         >
-                            <Quote className="absolute top-6 right-8 h-10 w-10 text-primary/5 group-hover:text-primary/10 transition-colors" />
+                            <Quote className="absolute top-6 end-8 h-10 w-10 text-primary/5 group-hover:text-primary/10 transition-colors" />
 
                             <div className="flex items-center gap-4 mb-6">
                                 <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xl uppercase ring-2 ring-primary/20">
@@ -173,7 +142,7 @@ export function GoogleReviews() {
                                     <path d="M12.48 10.92v3.28h4.74c-.18 1.14-.84 2.1-1.8 2.76v2.3h2.88c1.68-1.56 2.64-3.84 2.64-6.54 0-.48-.06-.96-.12-1.44H12.48zM5.16 11.64c0-.78.12-1.56.36-2.28V7.08H2.64c-.84 1.56-1.32 3.36-1.32 5.28s.48 3.72 1.32 5.28l2.88-2.28c-.24-.72-.36-1.5-.36-2.28z" />
                                     <path d="M12.48 5.76c1.44 0 2.7.48 3.72 1.44l2.76-2.76c-1.74-1.62-4.02-2.64-6.48-2.64-3.84 0-7.2 2.22-8.76 5.46l2.88 2.28c.66-1.92 2.46-3.3 4.68-3.3zM12.48 21.12c2.46 0 4.5-.84 6-2.28l-2.88-2.28c-.84.6-1.98.96-3.12.96-2.22 0-4.02-1.38-4.68-3.3L4.92 16.5c1.56 3.24 4.92 5.46 8.76 5.46z" />
                                 </svg>
-                                Verified Review
+                                {t.reviews_verified}
                             </div>
                         </div>
                     ))}
@@ -187,7 +156,7 @@ export function GoogleReviews() {
                         rel="noopener noreferrer"
                         className="inline-flex h-14 items-center justify-center rounded-full bg-foreground text-background px-8 text-sm font-bold transition-all hover:scale-105 hover:shadow-xl dark:bg-white dark:text-black w-full sm:w-auto"
                     >
-                        Laissez-nous un avis sur Google
+                        {t.reviews_cta}
                     </a>
                 </div>
             </div>

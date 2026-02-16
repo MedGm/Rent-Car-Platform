@@ -76,14 +76,16 @@ export default function AdminFleetPage() {
                                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                                 />
                             ) : (
-                                <div className="flex h-full items-center justify-center text-gray-400">
-                                    <span className="text-sm">No Image</span>
-                                </div>
+                                <img
+                                    src="/placehoder-car.png"
+                                    alt={car.name}
+                                    className="h-full w-full object-cover"
+                                />
                             )}
-                            <div className="absolute top-3 right-3">
+                            <div className="absolute top-3 end-3">
                                 <span className={`flex h-2 w-2 rounded-full ${car.is_active ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]' : 'bg-red-500'}`}></span>
                             </div>
-                            <div className="absolute bottom-3 left-3">
+                            <div className="absolute bottom-3 start-3">
                                 <span className="rounded-md bg-black/60 backdrop-blur-md px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
                                     {car.category}
                                 </span>

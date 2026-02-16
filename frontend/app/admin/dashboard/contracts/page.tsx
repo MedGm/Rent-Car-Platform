@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { FileText, Download, Plus, RefreshCw, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n";
 
 interface ConfirmedBooking {
     id: number;
@@ -39,6 +40,7 @@ export default function ContractsPage() {
     const [loading, setLoading] = useState(true);
     const [generatingId, setGeneratingId] = useState<number | null>(null);
     const [activeTab, setActiveTab] = useState<"generate" | "contracts">("generate");
+    const { t } = useLanguage();
 
     const getToken = () => localStorage.getItem("admin_token");
 
@@ -109,8 +111,8 @@ export default function ContractsPage() {
                 const link = document.createElement("a");
                 link.href = URL.createObjectURL(blob);
                 link.download = docType === "contract" 
-                    ? `Contrat_${contractId}.pdf` 
-                    : `Facture_${contractId}.pdf`;
+                    ? `${t.contracts_download_contract}_${contractId}.pdf` 
+                    : `${t.contracts_download_invoice}_${contractId}.pdf`;
                 link.click();
                 URL.revokeObjectURL(link.href);
             })
@@ -295,7 +297,7 @@ export default function ContractsPage() {
                                                     title="Download Contract PDF"
                                                 >
                                                     <Download className="h-3.5 w-3.5" />
-                                                    Contrat
+                                                    {t.contracts_btn_contract}
                                                 </button>
                                             )}
                                             {contract.has_invoice_pdf && (
@@ -305,7 +307,7 @@ export default function ContractsPage() {
                                                     title="Download Invoice PDF"
                                                 >
                                                     <FileText className="h-3.5 w-3.5" />
-                                                    Facture
+                                                    {t.contracts_btn_invoice}
                                                 </button>
                                             )}
                                         </div>

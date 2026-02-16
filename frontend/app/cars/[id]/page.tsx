@@ -81,7 +81,7 @@ export default async function CarDetailsPage({ params }: { params: Promise<{ id:
             {/* Top bar with back link */}
             <div className="container mx-auto px-4 pt-6">
                 <Link href="/cars" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                    <ArrowLeft className="mr-2 h-4 w-4" /> Back to Fleet
+                    <ArrowLeft className="me-2 h-4 w-4" /> Back to Fleet
                 </Link>
             </div>
 

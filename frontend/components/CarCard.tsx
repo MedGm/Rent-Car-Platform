@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { Fuel, Users, Settings2 } from "lucide-react";
+import { useLanguage } from "@/lib/i18n";
 
 interface Car {
     id: number;
@@ -17,6 +17,7 @@ interface Car {
 }
 
 export function CarCard({ car }: { car: Car }) {
+    const { t } = useLanguage();
     return (
         <Link
             href={`/cars/${car.id}`}
@@ -32,17 +33,20 @@ export function CarCard({ car }: { car: Car }) {
                         className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                 ) : (
-                    <div className="flex h-full items-center justify-center text-muted-foreground">
-                        No Image
-                    </div>
+                    <Image
+                        src="/placehoder-car.png"
+                        alt={car.name}
+                        fill
+                        className="object-cover"
+                    />
                 )}
                 {/* Category Badge */}
-                <span className="absolute top-3 left-3 rounded-full bg-primary/90 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                <span className="absolute top-3 start-3 rounded-full bg-primary/90 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
                     {car.category}
                 </span>
                 {/* Brand Logo */}
                 {car.brand_logo && (
-                    <div className="absolute top-3 right-3 h-8 w-8 rounded-full bg-white/90 dark:bg-black/60 backdrop-blur-sm p-1 shadow-sm">
+                    <div className="absolute top-3 end-3 h-8 w-8 rounded-full bg-white/90 dark:bg-black/60 backdrop-blur-sm p-1 shadow-sm">
                         <Image
                             src={car.brand_logo}
                             alt="Brand"
@@ -59,11 +63,11 @@ export function CarCard({ car }: { car: Car }) {
                     <h3 className="text-lg font-bold text-card-foreground group-hover:text-primary transition-colors">
                         {car.name}
                     </h3>
-                    <div className="text-right">
+                    <div className="text-end">
                         <div className="text-lg font-bold text-primary">
-                            {car.price_per_day > 0 ? `${car.price_per_day} DH` : 'Contact us'}
+                            {car.price_per_day > 0 ? `${car.price_per_day} DH` : t.car_contact_us}
                         </div>
-                        <div className="text-xs text-muted-foreground">/ day</div>
+                        <div className="text-xs text-muted-foreground">{t.car_per_day}</div>
                     </div>
                 </div>
 
@@ -72,7 +76,7 @@ export function CarCard({ car }: { car: Car }) {
                     {car.specs?.seats && (
                         <span className="flex items-center gap-1.5">
                             <Users className="h-4 w-4" />
-                            {car.specs.seats} Places
+                            {car.specs.seats} {t.car_seats}
                         </span>
                     )}
                     {car.specs?.fuel && (
@@ -92,7 +96,7 @@ export function CarCard({ car }: { car: Car }) {
                 {/* CTA */}
                 <div className="mt-auto pt-4">
                     <span className="inline-flex h-9 items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20 px-5 text-sm font-semibold text-primary transition-colors group-hover:bg-primary group-hover:text-white w-full">
-                        View Details
+                        {t.car_view_details}
                     </span>
                 </div>
             </div>

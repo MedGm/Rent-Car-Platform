@@ -11,6 +11,7 @@ import {
     Baby,
     type LucideIcon,
 } from "lucide-react";
+import { useLanguage } from "@/lib/i18n";
 
 interface ServiceData {
     id: number;
@@ -36,6 +37,7 @@ export function Services() {
     const scrollRef = useRef<HTMLDivElement>(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
+    const { t } = useLanguage();
 
     useEffect(() => {
         async function fetchServices() {
@@ -85,16 +87,16 @@ export function Services() {
         <section id="services" className="py-20 sm:py-28 bg-secondary/50 dark:bg-secondary/30">
             <div className="container mx-auto px-6 sm:px-4">
                 {/* Section Header */}
-                <div className="mb-12 flex flex-col items-center text-center md:flex-row md:items-end md:justify-between md:text-left gap-8">
+                <div className="mb-12 flex flex-col items-center text-center md:flex-row md:items-end md:justify-between md:text-start gap-8">
                     <div className="max-w-2xl">
                         <span className="inline-block rounded-full bg-primary/10 dark:bg-primary/20 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary mb-4">
-                            Ce que nous offrons
+                            {t.services_badge}
                         </span>
                         <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl text-foreground leading-tight">
-                            Our <span className="text-primary">Services</span>
+                            {t.services_title_1} <span className="text-primary">{t.services_title_2}</span>
                         </h2>
                         <p className="mt-4 text-muted-foreground text-base sm:text-lg">
-                            Everything you need for a seamless and worry-free rental experience.
+                            {t.services_desc}
                         </p>
                     </div>
 

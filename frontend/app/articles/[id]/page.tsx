@@ -27,16 +27,14 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
             <Navbar />
 
             {/* Hero image (responsive height) */}
-            {article.image_url && (
-                <div className="relative w-full h-[250px] sm:h-[400px] bg-gray-900">
-                    <img
-                        src={article.image_url}
-                        alt={article.title}
-                        className="w-full h-full object-cover opacity-80"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                </div>
-            )}
+            <div className="relative w-full h-[250px] sm:h-[400px] bg-gray-900">
+                <img
+                    src={article.image_url || "/placeholder-article.png"}
+                    alt={article.title}
+                    className="w-full h-full object-cover opacity-80"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+            </div>
 
             <div className="container mx-auto px-4 py-6 sm:py-8">
                 {/* Back link */}
@@ -44,7 +42,7 @@ export default async function ArticleDetailPage({ params }: { params: Promise<{ 
                     href="/#articles"
                     className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-4 sm:mb-6"
                 >
-                    <ArrowLeft className="mr-2 h-4 w-4" /> Back to Articles
+                    <ArrowLeft className="me-2 h-4 w-4" /> Back to Articles
                 </Link>
 
                 <article className="max-w-3xl mx-auto">

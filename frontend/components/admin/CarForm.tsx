@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Save, Loader2, Info } from "lucide-react";
+import { ArrowLeft, Save, Loader2 } from "lucide-react";
 import { ImageUpload } from "./ImageUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Select } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 
@@ -321,10 +321,6 @@ export function CarForm({ initialData, isEdit = false }: CarFormProps) {
                                 onImagesChange={handleImagesUpdate}
                             />
                         </CardContent>
-                        <CardFooter className="bg-muted/50 p-4 text-xs text-muted-foreground">
-                            <Info className="mr-2 h-3 w-3" />
-                            Tip: Reorder images by dragging (coming soon).
-                        </CardFooter>
                     </Card>
                 </div>
             </div>

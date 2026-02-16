@@ -1,8 +1,12 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { useLanguage } from "@/lib/i18n";
 
 export function Hero() {
+    const { t } = useLanguage();
     return (
         <section className="relative h-screen w-full overflow-hidden bg-black">
             {/* Background GIF */}
@@ -26,7 +30,7 @@ export function Hero() {
                     <span className="text-primary">MISTERS</span> DRIVERS
                 </h1>
                 <p className="mt-6 max-w-2xl text-lg text-gray-200 md:text-2xl drop-shadow-md px-2">
-                    Premium Fleet. Instant Availability. Zero Friction.
+                    {t.hero_subtitle}
                 </p>
 
                 <div className="mt-10 flex flex-col sm:flex-row gap-4 w-full sm:w-auto px-6 sm:px-0">
@@ -34,13 +38,13 @@ export function Hero() {
                         href="/cars"
                         className="inline-flex h-12 items-center justify-center rounded-full bg-primary px-8 text-base font-bold text-white transition-transform hover:scale-105 hover:bg-red-600 shadow-lg shadow-red-600/20 w-full sm:w-auto"
                     >
-                        Browse Fleet <ArrowRight className="ml-2 h-5 w-5" />
+                        {t.hero_browse} <ArrowRight className="ms-2 h-5 w-5" />
                     </Link>
                     <Link
                         href="#contact"
                         className="inline-flex h-12 items-center justify-center rounded-full border border-white/30 bg-white/10 px-8 text-base font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/20 w-full sm:w-auto"
                     >
-                        Contact Us
+                        {t.hero_contact}
                     </Link>
                 </div>
             </div>

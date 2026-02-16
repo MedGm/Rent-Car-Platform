@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { Plus, Pencil, Trash2, Eye, EyeOff, X, Upload, Save, Loader2, ImageIcon } from "lucide-react";
+import { Plus, Pencil, Trash2, Eye, EyeOff, X, Upload, Save, Loader2 } from "lucide-react";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
@@ -341,13 +341,7 @@ export default function ArticlesAdmin() {
                         {articles.map(article => (
                             <tr key={article.id} className="hover:bg-neutral-50">
                                 <td className="px-4 py-3">
-                                    {article.image_url ? (
-                                        <img src={article.image_url} alt="" className="h-10 w-10 rounded-lg object-cover" />
-                                    ) : (
-                                        <div className="h-10 w-10 rounded-lg bg-neutral-100 flex items-center justify-center">
-                                            <ImageIcon className="h-4 w-4 text-neutral-400" />
-                                        </div>
-                                    )}
+                                    <img src={article.image_url || "/placeholder-article.png"} alt="" className="h-10 w-10 rounded-lg object-cover" />
                                 </td>
                                 <td className="px-4 py-3 font-medium max-w-xs truncate">{article.title}</td>
                                 <td className="px-4 py-3 text-muted-foreground">{article.category || "—"}</td>

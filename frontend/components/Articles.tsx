@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
+import { useLanguage } from "@/lib/i18n";
 
 interface ArticleData {
     id: number;
@@ -21,6 +22,7 @@ export function Articles() {
     const scrollRef = useRef<HTMLDivElement>(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
+    const { t } = useLanguage();
 
     useEffect(() => {
         async function fetchArticles() {
@@ -70,16 +72,16 @@ export function Articles() {
         <section id="articles" className="py-20 sm:py-28 bg-background">
             <div className="container mx-auto px-6 sm:px-4">
                 {/* Section Header */}
-                <div className="mb-12 flex flex-col items-center text-center md:flex-row md:items-end md:justify-between md:text-left gap-8">
+                <div className="mb-12 flex flex-col items-center text-center md:flex-row md:items-end md:justify-between md:text-start gap-8">
                     <div className="max-w-2xl">
                         <span className="inline-block rounded-full bg-primary/10 dark:bg-primary/20 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary mb-4">
-                            Blog & Conseils
+                            {t.articles_badge}
                         </span>
                         <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl text-foreground leading-tight">
-                            Latest <span className="text-primary">Articles</span>
+                            {t.articles_title_1} <span className="text-primary">{t.articles_title_2}</span>
                         </h2>
-                        <p className="mt-4 text-muted-foreground text-base sm:text-lg max-w-xl mx-auto md:mx-0">
-                            Travel tips, road trip guides, and everything you need to know about driving in Morocco.
+                        <p className="mt-4 text-muted-foreground text-base sm:text-lg max-w-xl mx-auto md:ms-0">
+                            {t.articles_desc}
                         </p>
                     </div>
 
@@ -136,11 +138,14 @@ export function Articles() {
                                             className="object-cover transition-transform duration-500 group-hover:scale-105"
                                         />
                                     ) : (
-                                        <div className="flex h-full items-center justify-center text-muted-foreground">
-                                            No Image
-                                        </div>
+                                        <Image
+                                            src="/placeholder-article.png"
+                                            alt={article.title}
+                                            fill
+                                            className="object-cover"
+                                        />
                                     )}
-                                    <span className="absolute top-3 left-3 rounded-full bg-primary/90 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                                    <span className="absolute top-3 start-3 rounded-full bg-primary/90 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
                                         {article.category}
                                     </span>
                                 </div>
@@ -150,7 +155,7 @@ export function Articles() {
                                     {/* Date */}
                                     <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-3">
                                         <Calendar className="h-3.5 w-3.5" />
-                                        {new Date(article.created_at).toLocaleDateString("fr-FR", {
+                                        {new Date(article.created_at).toLocaleDateString(t.date_locale, {
                                             year: "numeric",
                                             month: "long",
                                             day: "numeric",
@@ -166,7 +171,7 @@ export function Articles() {
 
                                     <div className="mt-auto pt-4">
                                         <span className="inline-flex items-center text-sm font-semibold text-primary group-hover:gap-2 transition-all">
-                                            Read More <ArrowRight className="ml-1 h-4 w-4" />
+                                            {t.articles_read_more} <ArrowRight className="ms-1 h-4 w-4" />
                                         </span>
                                     </div>
                                 </div>

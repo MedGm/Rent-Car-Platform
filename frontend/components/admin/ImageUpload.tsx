@@ -2,9 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Upload, X, Trash2 } from "lucide-react";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 interface ImageUploadProps {
     existingImages: string[];
@@ -117,40 +115,34 @@ export function ImageUpload({ existingImages, onImagesChange }: ImageUploadProps
             />
 
             {(keptExisting.length > 0 || previews.length > 0) && (
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                <div className="grid grid-cols-2 gap-4">
                     {keptExisting.map((url, i) => (
-                        <div key={`existing-${i}`} className="group relative aspect-square overflow-hidden rounded-lg border bg-muted">
-                            <Image src={url} alt="Existing" fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
-                            <div className="absolute inset-0 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100" />
-                            <Button
+                        <div key={`existing-${i}`} className="relative aspect-[4/3] overflow-hidden rounded-lg border bg-muted">
+                            <img src={url} alt="Existing" className="h-full w-full object-cover" />
+                            <button
                                 type="button"
-                                variant="destructive"
-                                size="icon"
                                 onClick={() => removeExisting(i)}
-                                className="absolute right-2 top-2 h-8 w-8 translate-y-2 opacity-0 transition-all group-hover:translate-y-0 group-hover:opacity-100"
+                                className="absolute top-2 right-2 z-20 h-7 w-7 rounded-full bg-red-500 text-white flex items-center justify-center text-sm font-bold hover:bg-red-600 shadow-md"
                             >
-                                <Trash2 className="h-4 w-4" />
-                            </Button>
-                            <span className="absolute bottom-2 left-2 rounded bg-black/50 px-2 py-1 text-[10px] text-white">
+                                ×
+                            </button>
+                            <span className="absolute bottom-2 left-2 z-10 rounded bg-black/50 px-2 py-1 text-[10px] text-white">
                                 Existing
                             </span>
                         </div>
                     ))}
 
                     {previews.map((url, i) => (
-                        <div key={`new-${i}`} className="group relative aspect-square overflow-hidden rounded-lg border bg-muted">
-                            <Image src={url} alt="Preview" fill className="object-cover transition-transform duration-300 group-hover:scale-105" />
-                            <div className="absolute inset-0 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100" />
-                            <Button
+                        <div key={`new-${i}`} className="relative aspect-[4/3] overflow-hidden rounded-lg border bg-muted">
+                            <img src={url} alt="Preview" className="h-full w-full object-cover" />
+                            <button
                                 type="button"
-                                variant="destructive"
-                                size="icon"
                                 onClick={() => removeFile(i)}
-                                className="absolute right-2 top-2 h-8 w-8 translate-y-2 opacity-0 transition-all group-hover:translate-y-0 group-hover:opacity-100"
+                                className="absolute top-2 right-2 z-20 h-7 w-7 rounded-full bg-red-500 text-white flex items-center justify-center text-sm font-bold hover:bg-red-600 shadow-md"
                             >
-                                <X className="h-4 w-4" />
-                            </Button>
-                            <span className="absolute bottom-2 left-2 rounded bg-green-500/80 px-2 py-1 text-[10px] text-white">
+                                ×
+                            </button>
+                            <span className="absolute bottom-2 left-2 z-10 rounded bg-green-500/80 px-2 py-1 text-[10px] text-white">
                                 New
                             </span>
                         </div>
