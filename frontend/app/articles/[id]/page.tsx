@@ -6,9 +6,8 @@ import { ArrowLeft, Calendar } from "lucide-react";
 
 async function getArticle(id: string) {
     try {
-        // Use internal backend URL for server-side fetching in Docker
-        // Falls back to NEXT_PUBLIC_API_URL for Vercel / non-Docker deployments
-        const apiUrl = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://backend:5000/api";
+        // Server-side: use Docker internal URL; client-side fallback to public URL
+        const apiUrl = process.env.INTERNAL_API_URL || "http://backend:5000/api";
         const res = await fetch(`${apiUrl}/articles/${id}`, { cache: "no-store" });
         if (!res.ok) return null;
         return res.json();

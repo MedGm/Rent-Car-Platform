@@ -15,16 +15,12 @@ def create_app(config_class=Config):
     db.init_app(app)
     migrate.init_app(app, db)
 
-    # CORS: allow all origins on Vercel (serverless), restrict in Docker
+    # CORS: allow configured origins
+    allowed_origins = ["http://localhost:3000"]
     frontend_url = os.environ.get("FRONTEND_URL")
-    if os.environ.get("VERCEL"):
-        # On Vercel, allow all origins (headers also set in vercel.json)
-        CORS(app, resources={r"/api/*": {"origins": "*"}})
-    else:
-        allowed_origins = ["http://localhost:3000"]
-        if frontend_url:
-            allowed_origins.append(frontend_url)
-        CORS(app, resources={r"/api/*": {"origins": allowed_origins}})
+    if frontend_url:
+        allowed_origins.append(frontend_url)
+    CORS(app, resources={r"/api/*": {"origins": allowed_origins}})
 
     from app import models
     from app.auth import auth_bp
