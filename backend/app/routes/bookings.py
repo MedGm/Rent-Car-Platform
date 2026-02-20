@@ -4,24 +4,18 @@ from app.models import Booking, Car, CalendarBlock
 from app.auth import admin_required
 from datetime import datetime, date
 from werkzeug.utils import secure_filename
-from sqlalchemy.orm.attributes import flag_modified
 import os, time
 
 bookings_bp = Blueprint('bookings', __name__)
 
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'pdf'}
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 def save_booking_file(file, booking_id):
-    """Save a booking document and return its relative URL path."""
+    """Save a booking document and return its full URL (same pattern as car images)."""
     upload_dir = os.path.join(current_app.config['UPLOAD_FOLDER'], 'bookings', str(booking_id))
     os.makedirs(upload_dir, exist_ok=True)
     filename = secure_filename(file.filename)
     filename = f"{int(time.time())}_{filename}"
     file.save(os.path.join(upload_dir, filename))
-    return f"/static/uploads/bookings/{booking_id}/{filename}"
+    return f"{request.host_url}static/uploads/bookings/{booking_id}/{filename}"
 
 
 @bookings_bp.route('', methods=['POST'])
@@ -96,18 +90,12 @@ def create_booking_request():
     db.session.add(new_booking)
     db.session.flush()  # Get the ID before commit to use in file paths
 
-    # Handle document uploads (CIN & License images)
-    doc_paths = {}
+    # Handle document uploads (saved exactly like car images)
     for field_name in ['cin_recto', 'cin_verso', 'license_recto', 'license_verso']:
         file = request.files.get(field_name)
-        if file and file.filename and allowed_file(file.filename):
-            doc_paths[field_name] = save_booking_file(file, new_booking.id)
-
-    if doc_paths:
-        details = dict(new_booking.customer_details or {})
-        details['documents'] = doc_paths
-        new_booking.customer_details = details
-        flag_modified(new_booking, 'customer_details')
+        if file and file.filename:
+            url = save_booking_file(file, new_booking.id)
+            setattr(new_booking, field_name, url)
 
     db.session.commit()
     
@@ -132,6 +120,10 @@ def get_bookings():
             'status': b.status,
             'total_price': b.total_price,
             'created_at': b.created_at.isoformat(),
+            'cin_recto': b.cin_recto,
+            'cin_verso': b.cin_verso,
+            'license_recto': b.license_recto,
+            'license_verso': b.license_verso,
             'has_contract': b.contract is not None,
             'contract_id': b.contract.id if b.contract else None,
         })
@@ -154,6 +146,10 @@ def get_booking_detail(id):
         'status': b.status,
         'total_price': b.total_price,
         'created_at': b.created_at.isoformat(),
+        'cin_recto': b.cin_recto,
+        'cin_verso': b.cin_verso,
+        'license_recto': b.license_recto,
+        'license_verso': b.license_verso,
         'has_contract': b.contract is not None,
         'contract_id': b.contract.id if b.contract else None,
     })

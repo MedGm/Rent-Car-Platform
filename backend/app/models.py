@@ -45,6 +45,12 @@ class Booking(db.Model):
     customer_phone = db.Column(db.String(20), nullable=True)
     customer_details = db.Column(JSONB, nullable=True)  # Extra contract fields
 
+    # Document image URLs (stored like car images)
+    cin_recto = db.Column(db.String(500), nullable=True)
+    cin_verso = db.Column(db.String(500), nullable=True)
+    license_recto = db.Column(db.String(500), nullable=True)
+    license_verso = db.Column(db.String(500), nullable=True)
+
     contract = db.relationship('Contract', backref='booking', uselist=False)
 
     __table_args__ = (

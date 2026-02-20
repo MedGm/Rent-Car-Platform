@@ -16,12 +16,6 @@ interface CustomerDetails {
     nationality?: string;
     delivery_location?: string;
     return_location?: string;
-    documents?: {
-        cin_recto?: string;
-        cin_verso?: string;
-        license_recto?: string;
-        license_verso?: string;
-    };
 }
 
 interface Booking {
@@ -36,6 +30,10 @@ interface Booking {
     status: string;
     created_at: string;
     total_price: number;
+    cin_recto?: string;
+    cin_verso?: string;
+    license_recto?: string;
+    license_verso?: string;
 }
 
 export default function AdminBookingsPage() {
@@ -94,8 +92,7 @@ export default function AdminBookingsPage() {
     if (selectedBooking) {
         const b = selectedBooking;
         const d = b.customer_details || {};
-        const docs = d.documents || {};
-        const apiBase = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || '';
+        const hasDocs = b.cin_recto || b.cin_verso || b.license_recto || b.license_verso;
 
         return (
             <div className="space-y-6">
@@ -182,14 +179,14 @@ export default function AdminBookingsPage() {
                     {/* Document Images */}
                     <div className="rounded-xl border bg-card p-6 space-y-4">
                         <h3 className="font-bold flex items-center gap-2"><ImageIcon className="h-4 w-4" /> Uploaded Documents</h3>
-                        {Object.keys(docs).length === 0 ? (
+                        {!hasDocs ? (
                             <p className="text-sm text-muted-foreground">No documents uploaded.</p>
                         ) : (
                             <div className="grid grid-cols-2 gap-4">
-                                {docs.license_recto && <DocImage src={`${apiBase}${docs.license_recto}`} label="License — Front" />}
-                                {docs.license_verso && <DocImage src={`${apiBase}${docs.license_verso}`} label="License — Back" />}
-                                {docs.cin_recto && <DocImage src={`${apiBase}${docs.cin_recto}`} label="C.I.N. — Front" />}
-                                {docs.cin_verso && <DocImage src={`${apiBase}${docs.cin_verso}`} label="C.I.N. — Back" />}
+                                {b.license_recto && <DocImage src={b.license_recto} label="License — Front" />}
+                                {b.license_verso && <DocImage src={b.license_verso} label="License — Back" />}
+                                {b.cin_recto && <DocImage src={b.cin_recto} label="C.I.N. — Front" />}
+                                {b.cin_verso && <DocImage src={b.cin_verso} label="C.I.N. — Back" />}
                             </div>
                         )}
                     </div>
