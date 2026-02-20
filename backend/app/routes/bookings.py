@@ -4,6 +4,7 @@ from app.models import Booking, Car, CalendarBlock
 from app.auth import admin_required
 from datetime import datetime, date
 from werkzeug.utils import secure_filename
+from sqlalchemy.orm.attributes import flag_modified
 import os, time
 
 bookings_bp = Blueprint('bookings', __name__)
@@ -103,10 +104,10 @@ def create_booking_request():
             doc_paths[field_name] = save_booking_file(file, new_booking.id)
 
     if doc_paths:
-        details = new_booking.customer_details or {}
+        details = dict(new_booking.customer_details or {})
         details['documents'] = doc_paths
         new_booking.customer_details = details
-        db.session.add(new_booking)  # Mark as dirty for JSONB update
+        flag_modified(new_booking, 'customer_details')
 
     db.session.commit()
     
