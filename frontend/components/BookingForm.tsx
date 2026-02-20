@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { X, Calendar, CheckCircle, AlertCircle } from "lucide-react";
+import { X, Calendar, CheckCircle, AlertCircle, Upload, ImageIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -46,6 +46,16 @@ export function BookingForm({ carId, carName, pricePerDay, isOpen, onClose }: Bo
         delivery_location: "",
         return_location: "",
     });
+    const [files, setFiles] = useState<{
+        cin_recto: File | null;
+        cin_verso: File | null;
+        license_recto: File | null;
+        license_verso: File | null;
+    }>({ cin_recto: null, cin_verso: null, license_recto: null, license_verso: null });
+
+    function handleFileChange(field: keyof typeof files, file: File | null) {
+        setFiles(prev => ({ ...prev, [field]: file }));
+    }
 
     useEffect(() => {
         if (isOpen) {
@@ -109,10 +119,21 @@ export function BookingForm({ carId, carName, pricePerDay, isOpen, onClose }: Bo
         }
         setLoading(true);
         try {
+            const body = new FormData();
+            // Append all text fields
+            Object.entries(formData).forEach(([key, value]) => {
+                body.append(key, value);
+            });
+            body.append("car_id", String(carId));
+            // Append document files
+            if (files.cin_recto) body.append("cin_recto", files.cin_recto);
+            if (files.cin_verso) body.append("cin_verso", files.cin_verso);
+            if (files.license_recto) body.append("license_recto", files.license_recto);
+            if (files.license_verso) body.append("license_verso", files.license_verso);
+
             const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/bookings`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ...formData, car_id: carId }),
+                body,
             });
             if (!res.ok) {
                 const data = await res.json().catch(() => null);
@@ -276,6 +297,22 @@ export function BookingForm({ carId, carName, pricePerDay, isOpen, onClose }: Bo
                                             onChange={(e) => updateField("license_issued_at", e.target.value)} className="h-10" />
                                     </div>
                                 </div>
+                                {/* License photo uploads */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    <FileUploadField
+                                        id="license_recto"
+                                        label="License — Front"
+                                        file={files.license_recto}
+                                        onChange={(f) => handleFileChange("license_recto", f)}
+                                    />
+                                    <FileUploadField
+                                        id="license_verso"
+                                        label="License — Back"
+                                        file={files.license_verso}
+                                        onChange={(f) => handleFileChange("license_verso", f)}
+                                    />
+                                </div>
+
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-1.5">
                                         <Label htmlFor="cin">C.I.N. N°</Label>
@@ -288,6 +325,22 @@ export function BookingForm({ carId, carName, pricePerDay, isOpen, onClose }: Bo
                                             onChange={(e) => updateField("cin_valid_until", e.target.value)} className="h-10" />
                                     </div>
                                 </div>
+                                {/* CIN photo uploads */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    <FileUploadField
+                                        id="cin_recto"
+                                        label="C.I.N. — Front"
+                                        file={files.cin_recto}
+                                        onChange={(f) => handleFileChange("cin_recto", f)}
+                                    />
+                                    <FileUploadField
+                                        id="cin_verso"
+                                        label="C.I.N. — Back"
+                                        file={files.cin_verso}
+                                        onChange={(f) => handleFileChange("cin_verso", f)}
+                                    />
+                                </div>
+
                                 <div className="space-y-1.5">
                                     <Label htmlFor="passport">Passport N°</Label>
                                     <Input id="passport" placeholder="Passport number (if applicable)" value={formData.passport}
@@ -303,6 +356,53 @@ export function BookingForm({ carId, carName, pricePerDay, isOpen, onClose }: Bo
                     )}
                 </div>
             </div>
+        </div>
+    );
+}
+
+function FileUploadField({ id, label, file, onChange }: {
+    id: string;
+    label: string;
+    file: File | null;
+    onChange: (file: File | null) => void;
+}) {
+    const preview = file ? URL.createObjectURL(file) : null;
+
+    return (
+        <div className="space-y-1.5">
+            <Label htmlFor={id} className="text-xs">{label}</Label>
+            <label
+                htmlFor={id}
+                className={`flex items-center gap-3 rounded-xl border-2 border-dashed p-3 cursor-pointer transition-colors
+                    ${file ? 'border-primary/40 bg-primary/5' : 'border-muted-foreground/20 hover:border-muted-foreground/40'}`}
+            >
+                {preview ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={preview} alt={label} className="h-12 w-12 rounded-lg object-cover" />
+                ) : (
+                    <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                        <ImageIcon className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                )}
+                <div className="min-w-0 flex-1">
+                    {file ? (
+                        <p className="text-sm font-medium truncate">{file.name}</p>
+                    ) : (
+                        <p className="text-sm text-muted-foreground">
+                            <span className="font-medium text-primary">Upload</span> photo
+                        </p>
+                    )}
+                    <p className="text-xs text-muted-foreground">JPG, PNG or PDF</p>
+                </div>
+                {file && (
+                    <button type="button" onClick={(e) => { e.preventDefault(); onChange(null); }}
+                        className="shrink-0 rounded-full p-1 hover:bg-muted">
+                        <X className="h-3.5 w-3.5 text-muted-foreground" />
+                    </button>
+                )}
+            </label>
+            <input id={id} type="file" accept="image/*,.pdf" className="hidden"
+                onChange={(e) => onChange(e.target.files?.[0] || null)} />
         </div>
     );
 }
