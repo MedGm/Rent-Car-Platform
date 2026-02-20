@@ -57,7 +57,14 @@ export function Navbar() {
                 <div className="container mx-auto flex h-16 items-center justify-between sm:h-20 px-4">
                     {/* Brand Name */}
                     <Link href="/" className="flex items-center gap-2">
-                        <Image src="/logo.png" alt="Misters Drivers Logo" width={128} height={128} priority className="h-24 w-24 object-contain" />
+                        <Image
+                            src="/logo.png"
+                            alt="Misters Drivers Logo"
+                            width={128}
+                            height={128}
+                            priority
+                            className={`h-24 w-24 object-contain${theme === "dark" ? " brightness-0 invert" : ""}`}
+                        />
                     </Link>
 
                     {/* Desktop Nav */}
