@@ -5,36 +5,45 @@
 set -e
 
 DOMAIN="mistersdrivers.com"
-EMAIL="admin@mistersdrivers.com"  # Change to your real email
+EMAIL="contact@mistersdrivers.com"  # Change to your real email
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 echo "=============================================="
 echo "  SSL Setup for $DOMAIN"
 echo "=============================================="
 
-# 1. Create a temporary self-signed cert so nginx can start
-echo "[1/5] Creating temporary self-signed certificate..."
-docker compose run --rm --entrypoint "" certbot sh -c "
-  mkdir -p /etc/letsencrypt/live/$DOMAIN &&
-  openssl req -x509 -nodes -newkey rsa:2048 -days 1 \
-    -keyout /etc/letsencrypt/live/$DOMAIN/privkey.pem \
-    -out /etc/letsencrypt/live/$DOMAIN/fullchain.pem \
-    -subj '/CN=$DOMAIN'
-"
+# 0. Check if port 80 is reachable (basic firewall test)
+echo "[0/4] Checking firewall..."
+if command -v ufw &> /dev/null; then
+    sudo ufw allow 80/tcp 2>/dev/null || true
+    sudo ufw allow 443/tcp 2>/dev/null || true
+    echo "  Firewall rules updated (ports 80, 443 allowed)"
+else
+    echo "  No ufw detected — make sure ports 80 and 443 are open in your cloud firewall"
+fi
 
-# 2. Start nginx (it can now load the temporary cert)
-echo "[2/5] Starting nginx..."
-docker compose up -d nginx
+# 1. Swap to HTTP-only nginx config (no SSL needed) and start nginx
+echo "[1/4] Starting nginx with HTTP-only config..."
+cp "$SCRIPT_DIR/nginx/nginx-http.conf" "$SCRIPT_DIR/nginx/nginx-active.conf"
 
-# 3. Remove the temporary cert
-echo "[3/5] Removing temporary certificate..."
-docker compose run --rm --entrypoint "" certbot sh -c "
-  rm -rf /etc/letsencrypt/live/$DOMAIN &&
-  rm -rf /etc/letsencrypt/archive/$DOMAIN &&
-  rm -rf /etc/letsencrypt/renewal/$DOMAIN.conf
-"
+# Temporarily override the nginx volume mount to use the http-only config
+docker compose stop nginx 2>/dev/null || true
+docker compose rm -f nginx 2>/dev/null || true
 
-# 4. Request real certificates from Let's Encrypt
-echo "[4/5] Requesting real SSL certificate from Let's Encrypt..."
+# Start nginx with http-only config
+NGINX_CONF=nginx-http.conf docker compose up -d nginx
+sleep 3
+
+# Verify nginx is running on port 80
+echo "  Verifying nginx responds on port 80..."
+if curl -sf -o /dev/null http://localhost/.well-known/acme-challenge/test 2>/dev/null || curl -sf -o /dev/null http://localhost/ 2>/dev/null; then
+    echo "  ✓ nginx is listening on port 80"
+else
+    echo "  ⚠ nginx may not be fully ready yet, continuing..."
+fi
+
+# 2. Request real certificates from Let's Encrypt
+echo "[2/4] Requesting SSL certificate from Let's Encrypt..."
 docker compose run --rm certbot certonly \
   --webroot \
   --webroot-path=/var/www/certbot \
@@ -44,9 +53,20 @@ docker compose run --rm certbot certonly \
   -d "$DOMAIN" \
   -d "www.$DOMAIN"
 
-# 5. Reload nginx with the real certificate
-echo "[5/5] Reloading nginx with real certificate..."
-docker compose exec nginx nginx -s reload
+# 3. Switch to full SSL nginx config and restart
+echo "[3/4] Switching to SSL nginx config..."
+docker compose stop nginx
+docker compose rm -f nginx
+docker compose up -d nginx
+sleep 2
+
+# 4. Verify HTTPS works
+echo "[4/4] Verifying HTTPS..."
+if curl -sf -o /dev/null "https://$DOMAIN" 2>/dev/null; then
+    echo "  ✓ HTTPS is working!"
+else
+    echo "  ⚠ HTTPS check inconclusive (may need a moment to propagate)"
+fi
 
 echo ""
 echo "=============================================="
@@ -56,4 +76,4 @@ echo "=============================================="
 echo ""
 echo "To auto-renew, add this cron job:"
 echo "  crontab -e"
-echo "  0 3 * * * cd $(pwd) && docker compose run --rm certbot renew && docker compose exec nginx nginx -s reload"
+echo "  0 3 * * * cd $SCRIPT_DIR && docker compose run --rm certbot renew && docker compose exec nginx nginx -s reload"
