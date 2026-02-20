@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Menu, X, Sun, Moon, Globe, ChevronDown } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 import { useLanguage, Locale } from "@/lib/i18n";
+import Image from "next/image";
 
 const LANGUAGES: { code: Locale; label: string; flag: string }[] = [
     { code: "fr", label: "Français", flag: "🇫🇷" },
@@ -55,18 +56,8 @@ export function Navbar() {
             >
                 <div className="container mx-auto flex h-16 items-center justify-between sm:h-20 px-4">
                     {/* Brand Name */}
-                    <Link href="/" className="shrink-0 text-lg xs:text-xl sm:text-2xl font-extrabold tracking-tighter sm:tracking-tight uppercase">
-                        <span className={`transition-colors ${scrolled ? "text-foreground" : "text-white"}`}>
-                            MISTERS{" "}
-                        </span>
-                        <span className={`transition-colors ${scrolled
-                            ? "text-primary"
-                            : theme === "dark"
-                                ? "text-red-500"
-                                : "text-white"
-                            }`}>
-                            DRIVERS
-                        </span>
+                    <Link href="/" className="shrink-0 text-lg xs:text-xl sm:text-2xl font-extrabold tracking-tighter sm:tracking-tight uppercase flex items-center gap-2">
+                        <Image src="/logo.png" alt="Misters Drivers Logo" width={40} height={40} priority className="h-10 w-10 object-contain" />
                     </Link>
 
                     {/* Desktop Nav */}
