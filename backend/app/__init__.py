@@ -20,6 +20,12 @@ def create_app(config_class=Config):
     frontend_url = os.environ.get("FRONTEND_URL")
     if frontend_url:
         allowed_origins.append(frontend_url)
+        # Also allow www variant and http variant
+        if frontend_url.startswith("https://"):
+            allowed_origins.append(frontend_url.replace("https://", "http://"))
+        domain = frontend_url.split("://", 1)[1]
+        if not domain.startswith("www."):
+            allowed_origins.append(f"{frontend_url.split('://')[0]}://www.{domain}")
     CORS(app, resources={r"/api/*": {"origins": allowed_origins}})
 
     from app import models
