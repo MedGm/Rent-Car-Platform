@@ -99,7 +99,7 @@ const translations: Record<Locale, TranslationKeys> = {
         whatsapp_message: "Hello, I would like to book a vehicle.",
 
         // Hero
-        hero_subtitle: "Premium Fleet. Instant Availability. Zero Friction.",
+        hero_subtitle: "Car rental agency",
         hero_browse: "Browse Fleet",
         hero_contact: "Contact Us",
 
@@ -180,7 +180,7 @@ const translations: Record<Locale, TranslationKeys> = {
         whatsapp_message: "Bonjour, je souhaite réserver un véhicule.",
 
         // Hero
-        hero_subtitle: "Flotte Premium. Disponibilité Immédiate. Zéro Friction.",
+        hero_subtitle: "Agence de voitures",
         hero_browse: "Voir la Flotte",
         hero_contact: "Contactez-nous",
 
@@ -261,7 +261,7 @@ const translations: Record<Locale, TranslationKeys> = {
         whatsapp_message: "مرحباً، أود حجز سيارة.",
 
         // Hero
-        hero_subtitle: "أسطول فاخر. توفر فوري. بدون تعقيد.",
+        hero_subtitle: "وكالة تأجير سيارات",
         hero_browse: "تصفح الأسطول",
         hero_contact: "اتصل بنا",
 
@@ -343,7 +343,7 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType>({
     locale: "en",
-    setLocale: () => {},
+    setLocale: () => { },
     t: translations.en,
 });
 

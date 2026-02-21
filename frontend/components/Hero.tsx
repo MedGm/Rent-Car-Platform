@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
@@ -9,15 +8,15 @@ export function Hero() {
     const { t } = useLanguage();
     return (
         <section className="relative h-screen w-full overflow-hidden bg-black">
-            {/* Background GIF */}
-            <div className="absolute inset-0 opacity-60">
-                <Image
-                    src="/car.gif"
-                    alt="Luxury Car Background"
-                    fill
-                    unoptimized
-                    className="object-cover"
-                    priority
+            {/* Background Video */}
+            <div className="absolute inset-0 opacity-60 transition-opacity duration-1000 ease-in-out">
+                <video
+                    src="/car.mp4"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="h-full w-full object-cover transition-opacity duration-1000"
                 />
             </div>
 

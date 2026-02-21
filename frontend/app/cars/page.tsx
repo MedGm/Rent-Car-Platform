@@ -48,8 +48,9 @@ export default function CarsPage() {
                         alt="Background"
                         fill
                         unoptimized
-                        className="object-cover"
+                        className="object-cover transition-opacity duration-1000"
                         priority
+                        style={{ animationDuration: '6s' }}
                     />
                 </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-black/20 to-transparent" />

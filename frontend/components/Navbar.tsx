@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, Sun, Moon, Globe, ChevronDown } from "lucide-react";
 import { useTheme } from "@/components/ThemeProvider";
 import { useLanguage, Locale } from "@/lib/i18n";
@@ -19,6 +20,8 @@ export function Navbar() {
     const [langOpen, setLangOpen] = useState(false);
     const { theme, toggleTheme } = useTheme();
     const { locale, setLocale, t } = useLanguage();
+    const pathname = usePathname();
+    const router = useRouter();
 
     const NAV_LINKS = [
         { label: t.nav_cars, href: "#cars" },
@@ -38,6 +41,11 @@ export function Navbar() {
     const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
         if (href.startsWith("#")) {
             e.preventDefault();
+            if (pathname !== "/") {
+                router.push("/" + href);
+                setMobileOpen(false);
+                return;
+            }
             const el = document.querySelector(href);
             if (el) {
                 el.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -54,17 +62,26 @@ export function Navbar() {
                     : "bg-transparent"
                     }`}
             >
-                <div className="container mx-auto flex h-16 items-center justify-between sm:h-20 px-4">
+                <div className="container mx-auto flex h-16 items-center justify-between sm:h-22 px-4">
                     {/* Brand Name */}
-                    <Link href="/" className="flex items-center gap-2">
-                        <Image
-                            src="/logo.png"
-                            alt="Misters Drivers Logo"
-                            width={128}
-                            height={128}
-                            priority
-                            className={`h-24 w-24 object-contain${theme === "dark" ? " brightness-0 invert" : ""}`}
-                        />
+                    <Link href="/" className="flex items-center gap-1 group">
+                        <div className="relative rounded-xl px-3 py-1 flex items-center justify-center">
+                            {/* Smooth animated background layer perfectly synced with navbar */}
+                            <div
+                                className={`absolute inset-0 rounded-md bg-white transition-opacity duration-150 ease-in-out ${!scrolled && theme !== "dark" ? "opacity-90 shadow-sm" : "opacity-0"
+                                    }`}
+                            />
+                            <div className="relative z-10 flex items-center justify-center h-10 sm:h-14">
+                                <Image
+                                    src="/logo.png"
+                                    alt="Misters Drivers Logo"
+                                    width={256}
+                                    height={128}
+                                    priority
+                                    className={`h-full w-auto object-contain transition-transform duration-300 group-hover:scale-105${theme === "dark" ? " brightness-0 invert" : ""}`}
+                                />
+                            </div>
+                        </div>
                     </Link>
 
                     {/* Desktop Nav */}
@@ -74,7 +91,7 @@ export function Navbar() {
                                 key={link.href}
                                 href={link.href}
                                 onClick={(e) => handleNavClick(e, link.href)}
-                                className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${scrolled
+                                className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${scrolled
                                     ? "text-foreground/70 hover:text-foreground hover:bg-accent"
                                     : "text-white/80 hover:text-white hover:bg-white/10"
                                     }`}
@@ -108,9 +125,8 @@ export function Navbar() {
                                             <button
                                                 key={lang.code}
                                                 onClick={() => { setLocale(lang.code); setLangOpen(false); }}
-                                                className={`flex w-full items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent ${
-                                                    locale === lang.code ? "bg-accent/50 font-semibold text-primary" : "text-foreground/80"
-                                                }`}
+                                                className={`flex w-full items-center gap-3 px-4 py-2.5 text-sm transition-colors hover:bg-accent ${locale === lang.code ? "bg-accent/50 font-semibold text-primary" : "text-foreground/80"
+                                                    }`}
                                             >
                                                 <span className="text-base">{lang.flag}</span>
                                                 {lang.label}
