@@ -78,7 +78,7 @@ export function Navbar() {
                                     width={256}
                                     height={128}
                                     priority
-                                    className={`h-full w-auto object-contain transition-transform duration-300 group-hover:scale-105${theme === "dark" ? " brightness-0 invert" : ""}`}
+                                    className={`h-full w-24 object-contain transition-transform duration-300 group-hover:scale-105${theme === "dark" ? " brightness-0 invert" : ""}`}
                                 />
                             </div>
                         </div>
