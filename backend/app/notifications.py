@@ -1,6 +1,5 @@
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+import sib_api_v3_sdk
+from sib_api_v3_sdk.rest import ApiException
 from twilio.rest import Client
 from flask import current_app
 import threading
@@ -10,28 +9,24 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def _send_email_async(app, booking, car_name):
-    """Sends an email notification via SMTP in a background thread."""
+    """Sends an email notification via the Brevo API in a background thread."""
     with app.app_context():
         try:
             admin_email = current_app.config.get('ADMIN_EMAIL')
-            smtp_server = current_app.config.get('SMTP_SERVER')
-            smtp_username = current_app.config.get('SMTP_USERNAME')
-            smtp_password = current_app.config.get('SMTP_PASSWORD')
-            smtp_port = current_app.config.get('SMTP_PORT', 587)
+            sender_email = current_app.config.get('ADMIN_SENDER_EMAIL') or "notifications@mistersdrivers.com"
+            api_key = current_app.config.get('BREVO_API_KEY')
 
-            if not all([admin_email, smtp_server, smtp_username, smtp_password]):
-                logger.warning("SMTP configuration is incomplete. Skipping email notification.")
+            if not all([admin_email, api_key]):
+                logger.warning("Brevo API configuration is incomplete. Skipping email notification.")
                 return
-                
-            # Clean password formatting (Gmail app passwords often have spaces)
-            smtp_password = smtp_password.replace(" ", "")
 
-            msg = MIMEMultipart()
-            msg['From'] = smtp_username
-            msg['To'] = admin_email
-            msg['Subject'] = f"New Booking Request: {car_name} - {booking.customer_name}"
-
-            body = f"""
+            configuration = sib_api_v3_sdk.Configuration()
+            configuration.api_key['api-key'] = api_key
+            api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
+            
+            subject = f"New Booking Request: {car_name} - {booking.customer_name}"
+            html_content = f"""
+            <html><body>
             <h2>New Booking Request Received</h2>
             <p><strong>Customer Name:</strong> {booking.customer_name}</p>
             <p><strong>Phone:</strong> {booking.customer_phone}</p>
@@ -41,17 +36,24 @@ def _send_email_async(app, booking, car_name):
             <p><strong>Total Price:</strong> {booking.total_price} MAD</p>
             <hr>
             <p><a href="{current_app.config.get('FRONTEND_URL', 'https://mistersdrivers.com')}/admin">Log in to the Admin Dashboard to review.</a></p>
+            </body></html>
             """
             
-            msg.attach(MIMEText(body, 'html'))
-
-            server = smtplib.SMTP(smtp_server, smtp_port)
-            server.starttls()
-            server.login(smtp_username, smtp_password)
-            server.send_message(msg)
-            server.quit()
+            sender = {"name":"Misters Drivers Notifications", "email":sender_email}
+            to = [{"email":admin_email, "name":"Admin"}]
             
-            logger.info(f"Admin email notification sent for booking {booking.id}")
+            send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+                to=to,
+                html_content=html_content,
+                sender=sender,
+                subject=subject
+            )
+            
+            api_instance.send_transac_email(send_smtp_email)
+            logger.info(f"Admin Brevo email notification sent for booking {booking.id}")
+            
+        except ApiException as e:
+            logger.error(f"Brevo API Exception: {e}")
         except Exception as e:
             logger.error(f"Failed to send admin email: {str(e)}")
 

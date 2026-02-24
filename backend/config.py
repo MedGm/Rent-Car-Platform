@@ -25,12 +25,10 @@ class Config:
     # Notification Settings
     ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL')
     ADMIN_PHONE_NUMBER = os.environ.get('ADMIN_PHONE_NUMBER')
+    ADMIN_SENDER_EMAIL = os.environ.get('ADMIN_SENDER_EMAIL')
     
-    # SMTP Email Settings
-    SMTP_SERVER = os.environ.get('SMTP_SERVER')
-    SMTP_PORT = int(os.environ.get('SMTP_PORT', 587))
-    SMTP_USERNAME = os.environ.get('SMTP_USERNAME')
-    SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD')
+    # Brevo API Settings
+    BREVO_API_KEY = os.environ.get('BREVO_API_KEY')
     
     # Twilio SMS Settings
     TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID')
