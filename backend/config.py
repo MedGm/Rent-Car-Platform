@@ -18,18 +18,21 @@ class Config:
     SQLALCHEMY_ENGINE_OPTIONS = {
         "pool_pre_ping": True,
     }
-    UPLOAD_FOLDER = os.path.join(os.getcwd(), 'app/static/uploads')
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max limit
-
-
-class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
-    SQLALCHEMY_DATABASE_URI = _get_database_url()
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    # SSL required for Neon / cloud Postgres
-    SQLALCHEMY_ENGINE_OPTIONS = {
-        "pool_pre_ping": True,
-    }
     # Use /tmp on serverless (Vercel) since filesystem is read-only
     UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER') or os.path.join(os.getcwd(), 'app/static/uploads')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max limit
+    
+    # Notification Settings
+    ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL')
+    ADMIN_PHONE_NUMBER = os.environ.get('ADMIN_PHONE_NUMBER')
+    
+    # SMTP Email Settings
+    SMTP_SERVER = os.environ.get('SMTP_SERVER')
+    SMTP_PORT = int(os.environ.get('SMTP_PORT', 587))
+    SMTP_USERNAME = os.environ.get('SMTP_USERNAME')
+    SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD')
+    
+    # Twilio SMS Settings
+    TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID')
+    TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN')
+    TWILIO_PHONE_NUMBER = os.environ.get('TWILIO_PHONE_NUMBER')

@@ -99,6 +99,10 @@ def create_booking_request():
 
     db.session.commit()
     
+    # Trigger Admin Notifications (Async to prevent blocking the HTTP response)
+    from app.notifications import notify_admin_of_new_booking
+    notify_admin_of_new_booking(new_booking, car.name)
+    
     return jsonify({'message': 'Booking request submitted', 'id': new_booking.id, 'total_price': total_price}), 201
 
 @bookings_bp.route('', methods=['GET'])
