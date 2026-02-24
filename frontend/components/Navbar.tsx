@@ -62,23 +62,28 @@ export function Navbar() {
                     : "bg-transparent"
                     }`}
             >
-                <div className="container mx-auto flex h-16 items-center justify-between sm:h-22 px-4">
+                <div className="container mx-auto flex h-16 items-center justify-between sm:h-24 px-4">
                     {/* Brand Name */}
-                    <Link href="/" className="flex items-center gap-1 group">
-                        <div className="relative rounded-xl px-3 py-1 flex items-center justify-center">
-                            {/* Smooth animated background layer perfectly synced with navbar */}
+                    <Link href="/" className="flex items-center group">
+                        <div className="relative flex items-center justify-center px-3 py-2">
+                            {/* Synced background */}
                             <div
-                                className={`absolute inset-0 rounded-md bg-white transition-opacity duration-150 ease-in-out ${!scrolled && theme !== "dark" ? "opacity-90 shadow-sm" : "opacity-0"
+                                className={`absolute inset-0 rounded-lg bg-white transition-opacity duration-200 ${!scrolled && theme !== "dark"
+                                    ? "opacity-90 shadow-sm"
+                                    : "opacity-0"
                                     }`}
                             />
-                            <div className="relative z-10 flex items-center justify-center h-10 sm:h-14">
+
+                            {/* Logo */}
+                            <div className="relative z-10">
                                 <Image
                                     src="/logo.png"
                                     alt="Misters Drivers Logo"
-                                    width={256}
-                                    height={128}
+                                    width={1000}
+                                    height={500}
                                     priority
-                                    className={`h-full w-24 object-contain transition-transform duration-300 group-hover:scale-105${theme === "dark" ? " brightness-0 invert" : ""}`}
+                                    className={`h-11 sm:h-15 w-auto object-contain transition-transform duration-300 group-hover:scale-105 ${theme === "dark" ? "brightness-0 invert" : ""
+                                        }`}
                                 />
                             </div>
                         </div>
