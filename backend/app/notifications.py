@@ -22,6 +22,9 @@ def _send_email_async(app, booking, car_name):
             if not all([admin_email, smtp_server, smtp_username, smtp_password]):
                 logger.warning("SMTP configuration is incomplete. Skipping email notification.")
                 return
+                
+            # Clean password formatting (Gmail app passwords often have spaces)
+            smtp_password = smtp_password.replace(" ", "")
 
             msg = MIMEMultipart()
             msg['From'] = smtp_username
