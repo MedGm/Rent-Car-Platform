@@ -75,13 +75,15 @@ export function Footer() {
                 <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4 mb-16">
                     {/* Brand & About */}
                     <div className="flex flex-col items-center md:items-start text-center md:text-start space-y-4">
-                        <div className="relative h-10 w-40">
-                            <Image
-                                src="/logo.png"
-                                alt="Misters Drivers Logo"
-                                fill
-                                className="object-contain"
-                            />
+                        <div className="relative bg-white rounded-lg px-3 py-2 flex items-center justify-center shadow-sm">
+                            <div className="relative h-10 w-36 sm:h-12 sm:w-40">
+                                <Image
+                                    src="/logo.png"
+                                    alt="Misters Drivers Logo"
+                                    fill
+                                    className="object-contain"
+                                />
+                            </div>
                         </div>
                         <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
                             {t.footer_about}
