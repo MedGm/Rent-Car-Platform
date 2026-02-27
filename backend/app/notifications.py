@@ -110,8 +110,65 @@ def _send_sms_async(app, booking, car_name):
         except Exception as e:
             logger.error(f"Failed to send admin SMS: {str(e)}")
 
+def _send_customer_confirmation_email_async(app, booking, car_name):
+    """Sends a styled confirmation email via the Brevo API in a background thread."""
+    with app.app_context():
+        try:
+            sender_email = current_app.config.get('ADMIN_SENDER_EMAIL') or "notifications@mistersdrivers.com"
+            api_key = current_app.config.get('BREVO_API_KEY')
+
+            if not api_key or not booking.customer_email:
+                logger.warning("Brevo API key or customer email missing. Skipping confirmation email.")
+                return
+
+            configuration = sib_api_v3_sdk.Configuration()
+            configuration.api_key['api-key'] = api_key
+            api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
+            
+            subject = f"Misters Drivers - Your Booking is Confirmed!"
+            
+            # Enhanced professional HTML template for the customer
+            html_content = f"""
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 10px; background-color: #ffffff;">
+                <div style="text-align: center; padding-bottom: 20px; border-bottom: 2px solid #f0f0f0;">
+                    <h1 style="color: #10B981; margin: 0;">Booking Confirmed!</h1>
+                    <p style="color: #6b7280; font-size: 16px; margin-top: 5px;">Hello {booking.customer_name}, your vehicle reservation has been successfully confirmed.</p>
+                </div>
+                
+                <div style="padding: 20px 0;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr><td style="padding: 10px 0; border-bottom: 1px solid #f0f0f0; color: #6b7280;"><strong>Vehicle</strong></td><td style="padding: 10px 0; border-bottom: 1px solid #f0f0f0; text-align: right; color: #111827; font-weight: 500;">{car_name}</td></tr>
+                        <tr><td style="padding: 10px 0; border-bottom: 1px solid #f0f0f0; color: #6b7280;"><strong>Dates</strong></td><td style="padding: 10px 0; border-bottom: 1px solid #f0f0f0; text-align: right; color: #111827; font-weight: 500;">{booking.start_date.strftime('%d %b %Y')} - {booking.end_date.strftime('%d %b %Y')}</td></tr>
+                        <tr><td style="padding: 15px 0 5px 0; color: #6b7280;"><strong>Total Price</strong></td><td style="padding: 15px 0 5px 0; text-align: right; color: #111827; font-size: 18px; font-weight: bold;">{booking.total_price} MAD</td></tr>
+                    </table>
+                </div>
+                
+                <div style="padding-top: 20px; color: #6b7280; font-size: 14px; text-align: center;">
+                    <p>Thank you for choosing Misters Drivers. If you have any questions, please reply to this email or contact us.</p>
+                </div>
+            </div>
+            """
+            
+            sender = {"name":"Misters Drivers", "email":sender_email}
+            to = [{"email":booking.customer_email, "name":booking.customer_name}]
+            
+            send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
+                to=to,
+                html_content=html_content,
+                sender=sender,
+                subject=subject
+            )
+            
+            api_instance.send_transac_email(send_smtp_email)
+            logger.info(f"Customer confirmation Brevo email sent for booking {booking.id}")
+            
+        except ApiException as e:
+            logger.error(f"Brevo Email API Exception (Customer): {e}")
+        except Exception as e:
+            logger.error(f"Failed to send customer confirmation email: {str(e)}")
+
 def notify_admin_of_new_booking(booking, car_name):
-    """Entry point to dispatch async notifications. Returns immediately."""
+    """Entry point to dispatch async notifications for admins. Returns immediately."""
     app = current_app._get_current_object()
     
     email_thread = threading.Thread(target=_send_email_async, args=(app, booking, car_name))
@@ -119,3 +176,10 @@ def notify_admin_of_new_booking(booking, car_name):
     
     email_thread.start()
     sms_thread.start()
+
+def notify_customer_booking_confirmed(booking, car_name):
+    """Entry point to dispatch customer confirmation email. Returns immediately."""
+    app = current_app._get_current_object()
+    
+    email_thread = threading.Thread(target=_send_customer_confirmation_email_async, args=(app, booking, car_name))
+    email_thread.start()

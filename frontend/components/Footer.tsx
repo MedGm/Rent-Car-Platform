@@ -80,16 +80,13 @@ export function Footer() {
                                 src="/logo.png"
                                 alt="Misters Drivers Logo"
                                 fill
-                                className="object-contain brightness-0 invert"
+                                className="object-contain"
                             />
                         </div>
                         <p className="text-gray-400 text-sm leading-relaxed max-w-sm">
                             {t.footer_about}
                         </p>
                         <div className="flex gap-4">
-                            <Link href="https://www.facebook.com/profile.php?id=61561026257498" target="_blank" className="text-gray-400 hover:text-primary transition-colors p-2 -m-2">
-                                <Facebook className="h-5 w-5" />
-                            </Link>
                             <Link href="https://www.instagram.com/misters.drivers" target="_blank" className="text-gray-400 hover:text-primary transition-colors p-2 -m-2">
                                 <Instagram className="h-5 w-5" />
                             </Link>

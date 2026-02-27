@@ -189,6 +189,11 @@ def update_booking_status(id):
 
     booking.status = new_status
     db.session.commit()
+    
+    if new_status == 'confirmed' and booking.customer_email:
+        from app.notifications import notify_customer_booking_confirmed
+        notify_customer_booking_confirmed(booking, booking.car.name)
+        
     return jsonify({'message': f'Booking {new_status}'})
 
 @bookings_bp.route('/availability/<int:car_id>', methods=['GET'])
