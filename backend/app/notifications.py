@@ -125,26 +125,41 @@ def _send_customer_confirmation_email_async(app, booking, car_name):
             configuration.api_key['api-key'] = api_key
             api_instance = sib_api_v3_sdk.TransactionalEmailsApi(sib_api_v3_sdk.ApiClient(configuration))
             
+            frontend_url = current_app.config.get('FRONTEND_URL', 'https://mistersdrivers.com')
+            logo_url = f"{frontend_url}/logo.png"
             subject = f"Misters Drivers - Your Booking is Confirmed!"
             
-            # Enhanced professional HTML template for the customer
+            # Enhanced professional HTML template for the customer with App Theme (Dark/Red matching)
             html_content = f"""
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 10px; background-color: #ffffff;">
-                <div style="text-align: center; padding-bottom: 20px; border-bottom: 2px solid #f0f0f0;">
-                    <h1 style="color: #10B981; margin: 0;">Booking Confirmed!</h1>
-                    <p style="color: #6b7280; font-size: 16px; margin-top: 5px;">Hello {booking.customer_name}, your vehicle reservation has been successfully confirmed.</p>
+            <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 0; border-radius: 12px; overflow: hidden; background-color: #ffffff; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #eaeaea;">
+                
+                <!-- Dark Header with Logo -->
+                <div style="background-color: #0a0a0a; padding: 30px 20px; text-align: center; border-bottom: 4px solid #ef4444;">
+                    <img src="{logo_url}" alt="Misters Drivers" style="max-height: 45px; width: auto; display: block; margin: 0 auto;" />
                 </div>
                 
-                <div style="padding: 20px 0;">
-                    <table style="width: 100%; border-collapse: collapse;">
-                        <tr><td style="padding: 10px 0; border-bottom: 1px solid #f0f0f0; color: #6b7280;"><strong>Vehicle</strong></td><td style="padding: 10px 0; border-bottom: 1px solid #f0f0f0; text-align: right; color: #111827; font-weight: 500;">{car_name}</td></tr>
-                        <tr><td style="padding: 10px 0; border-bottom: 1px solid #f0f0f0; color: #6b7280;"><strong>Dates</strong></td><td style="padding: 10px 0; border-bottom: 1px solid #f0f0f0; text-align: right; color: #111827; font-weight: 500;">{booking.start_date.strftime('%d %b %Y')} - {booking.end_date.strftime('%d %b %Y')}</td></tr>
-                        <tr><td style="padding: 15px 0 5px 0; color: #6b7280;"><strong>Total Price</strong></td><td style="padding: 15px 0 5px 0; text-align: right; color: #111827; font-size: 18px; font-weight: bold;">{booking.total_price} MAD</td></tr>
-                    </table>
+                <div style="padding: 40px 30px;">
+                    <div style="text-align: center; padding-bottom: 25px;">
+                        <span style="display: inline-block; background-color: #ecfdf5; color: #10b981; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 15px;">✓ Reservation Confirmed</span>
+                        <h1 style="color: #111827; margin: 0 0 10px 0; font-size: 24px;">Thank you, {booking.customer_name}!</h1>
+                        <p style="color: #6b7280; font-size: 16px; margin: 0; line-height: 1.5;">Your vehicle is officially reserved. We are reviewing the final details and look forward to serving you.</p>
+                    </div>
+                    
+                    <div style="background-color: #f9fafb; border-radius: 8px; padding: 25px; margin-bottom: 25px; border: 1px solid #f3f4f6;">
+                        <h3 style="margin: 0 0 15px 0; color: #111827; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">Booking Details</h3>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr><td style="padding: 12px 0; border-bottom: 1px solid #eaeaea; color: #6b7280; font-size: 15px;"><strong>Vehicle</strong></td><td style="padding: 12px 0; border-bottom: 1px solid #eaeaea; text-align: right; color: #111827; font-weight: 600; font-size: 15px;">{car_name}</td></tr>
+                            <tr><td style="padding: 12px 0; border-bottom: 1px solid #eaeaea; color: #6b7280; font-size: 15px;"><strong>Dates</strong></td><td style="padding: 12px 0; border-bottom: 1px solid #eaeaea; text-align: right; color: #111827; font-weight: 600; font-size: 15px;">{booking.start_date.strftime('%d %b %Y')} - {booking.end_date.strftime('%d %b %Y')}</td></tr>
+                            <tr><td style="padding: 15px 0 0 0; color: #6b7280; font-size: 15px;"><strong>Total Price</strong></td><td style="padding: 15px 0 0 0; text-align: right; color: #ef4444; font-size: 20px; font-weight: bold;">{booking.total_price} DH</td></tr>
+                        </table>
+                    </div>
                 </div>
                 
-                <div style="padding-top: 20px; color: #6b7280; font-size: 14px; text-align: center;">
-                    <p>Thank you for choosing Misters Drivers. If you have any questions, please reply to this email or contact us.</p>
+                <!-- Footer area -->
+                <div style="background-color: #f9fafb; padding: 25px; text-align: center; border-top: 1px solid #eaeaea;">
+                    <p style="color: #6b7280; font-size: 14px; margin: 0 0 10px 0;">Need to make changes to your trip?</p>
+                    <a href="{frontend_url}/#contact" style="color: #ef4444; text-decoration: none; font-weight: bold; font-size: 14px;">Contact Support</a>
+                    <p style="color: #9ca3af; font-size: 12px; margin: 20px 0 0 0;">&copy; 2026 Misters Drivers. All rights reserved.</p>
                 </div>
             </div>
             """

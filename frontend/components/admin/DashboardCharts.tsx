@@ -2,15 +2,19 @@
 
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-    PieChart, Pie, Cell, LineChart, Line
+    PieChart, Pie, Cell, AreaChart, Area
 } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp } from "lucide-react";
+import { useTheme } from "@/components/ThemeProvider";
 
 // Colors (Netflix red palette aware)
 const COLORS = ['#ef4444', '#22c55e', '#eab308', '#3b82f6', '#a855f7'];
 
 export function BookingTrendsChart({ data }: { data: { name: string, bookings: number }[] }) {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
+
     if (!data || data.length === 0) return <div className="h-[300px] flex items-center justify-center text-muted-foreground">No data available</div>;
 
     return (
@@ -19,17 +23,30 @@ export function BookingTrendsChart({ data }: { data: { name: string, bookings: n
                 <CardTitle>Booking Trends</CardTitle>
                 <CardDescription>Number of bookings per month</CardDescription>
             </CardHeader>
-            <CardContent className="h-[300px]">
+            <CardContent className="h-[300px] pt-4">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={data}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                        <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
-                        <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value}`} />
+                        <defs>
+                            <linearGradient id="colorBookings" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#ef4444" stopOpacity={0.9} />
+                                <stop offset="95%" stopColor="#ef4444" stopOpacity={0.3} />
+                            </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDark ? "#333" : "#e5e7eb"} />
+                        <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} dy={10} />
+                        <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value: number | string) => `${value}`} dx={-10} />
                         <Tooltip
-                            contentStyle={{ backgroundColor: 'var(--background)', borderRadius: '8px' }}
-                            cursor={{ fill: 'var(--muted)' }}
+                            contentStyle={{
+                                backgroundColor: isDark ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.9)',
+                                backdropFilter: 'blur(8px)',
+                                borderRadius: '8px',
+                                border: isDark ? '1px solid #333' : '1px solid #e5e7eb',
+                                color: isDark ? '#fff' : '#000',
+                                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                            }}
+                            cursor={{ fill: isDark ? '#222' : '#f3f4f6' }}
                         />
-                        <Bar dataKey="bookings" fill="#ef4444" radius={[4, 4, 0, 0]} name="Bookings" />
+                        <Bar dataKey="bookings" fill="url(#colorBookings)" radius={[6, 6, 0, 0]} name="Bookings" barSize={32} />
                     </BarChart>
                 </ResponsiveContainer>
             </CardContent>
@@ -38,39 +55,56 @@ export function BookingTrendsChart({ data }: { data: { name: string, bookings: n
 }
 
 export function RevenueChart({ data }: { data: { name: string, revenue: number }[] }) {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
+
     if (!data || data.length === 0) return <div className="h-[300px] flex items-center justify-center text-muted-foreground">No data available</div>;
 
     return (
-        <Card className="col-span-2 lg:col-span-4">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0">
+        <Card className="col-span-2 lg:col-span-4 overflow-hidden relative">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <div>
-                    <CardTitle>Revenue Growth</CardTitle>
+                    <CardTitle className="text-xl">Revenue Growth</CardTitle>
                     <CardDescription>Monthly revenue from confirmed bookings</CardDescription>
                 </div>
-                <div className="flex items-center gap-2 rounded-lg bg-green-50 px-2 py-1 text-xs font-bold text-green-600 dark:bg-green-900/20">
-                    <TrendingUp className="h-3 w-3" />
+                <div className="flex items-center gap-2 rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                    <TrendingUp className="h-4 w-4" />
                     +12.5%
                 </div>
             </CardHeader>
-            <CardContent className="h-[300px]">
+            <CardContent className="h-[300px] pt-4">
                 <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={data}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
-                        <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
-                        <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value) => `${value} DH`} />
+                    <AreaChart data={data}>
+                        <defs>
+                            <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="5%" stopColor="#22c55e" stopOpacity={0.4} />
+                                <stop offset="95%" stopColor="#22c55e" stopOpacity={0.0} />
+                            </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDark ? "#333" : "#e5e7eb"} />
+                        <XAxis dataKey="name" stroke="#888888" fontSize={12} tickLine={false} axisLine={false} dy={10} />
+                        <YAxis stroke="#888888" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(value: number | string) => `${value} DH`} dx={-10} />
                         <Tooltip
-                            contentStyle={{ backgroundColor: 'var(--background)', borderRadius: '8px', border: '1px solid var(--border)' }}
+                            contentStyle={{
+                                backgroundColor: isDark ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.9)',
+                                backdropFilter: 'blur(8px)',
+                                borderRadius: '8px',
+                                border: isDark ? '1px solid #333' : '1px solid #e5e7eb',
+                                color: isDark ? '#fff' : '#000',
+                                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                            }}
                         />
-                        <Line
+                        <Area
                             type="monotone"
                             dataKey="revenue"
                             stroke="#22c55e"
                             strokeWidth={3}
-                            dot={{ r: 4, fill: "#22c55e", strokeWidth: 2, stroke: "#fff" }}
-                            activeDot={{ r: 6, strokeWidth: 0 }}
+                            fillOpacity={1}
+                            fill="url(#colorRevenue)"
                             name="Revenue"
+                            activeDot={{ r: 6, strokeWidth: 0, fill: "#22c55e" }}
                         />
-                    </LineChart>
+                    </AreaChart>
                 </ResponsiveContainer>
             </CardContent>
         </Card>
@@ -78,6 +112,9 @@ export function RevenueChart({ data }: { data: { name: string, revenue: number }
 }
 
 export function StatusDistributionChart({ data }: { data: { name: string, value: number }[] }) {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
+
     if (!data || data.length === 0) return <div className="h-[300px] flex items-center justify-center text-muted-foreground">No data available</div>;
 
     // Map status to colors
@@ -101,17 +138,26 @@ export function StatusDistributionChart({ data }: { data: { name: string, value:
                             data={data}
                             cx="50%"
                             cy="50%"
-                            innerRadius={60}
-                            outerRadius={80}
+                            innerRadius={70}
+                            outerRadius={90}
                             paddingAngle={5}
                             dataKey="value"
+                            stroke="none"
                         >
                             {data.map((entry, index) => (
                                 <Cell key={`cell-${index}`} fill={STATUS_COLORS[entry.name.toLowerCase()] || COLORS[index % COLORS.length]} />
                             ))}
                         </Pie>
-                        <Tooltip contentStyle={{ backgroundColor: 'var(--background)', borderRadius: '8px' }} />
-                        <Legend verticalAlign="bottom" height={36} />
+                        <Tooltip
+                            contentStyle={{
+                                backgroundColor: isDark ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.9)',
+                                backdropFilter: 'blur(8px)',
+                                borderRadius: '8px',
+                                border: isDark ? '1px solid #333' : '1px solid #e5e7eb',
+                                color: isDark ? '#fff' : '#000'
+                            }}
+                        />
+                        <Legend verticalAlign="bottom" height={36} iconType="circle" />
                     </PieChart>
                 </ResponsiveContainer>
             </CardContent>
@@ -120,6 +166,9 @@ export function StatusDistributionChart({ data }: { data: { name: string, value:
 }
 
 export function PopularCarsChart({ data }: { data: { name: string, bookings: number, revenue: number }[] }) {
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
+
     if (!data || data.length === 0) return <div className="h-[300px] flex items-center justify-center text-muted-foreground">No data available</div>;
 
     return (
@@ -128,19 +177,36 @@ export function PopularCarsChart({ data }: { data: { name: string, bookings: num
                 <CardTitle>Fleet Performance</CardTitle>
                 <CardDescription>Top 5 vehicles by bookings and revenue</CardDescription>
             </CardHeader>
-            <CardContent className="h-[300px]">
+            <CardContent className="h-[300px] pt-4">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={data} layout="vertical" margin={{ left: 20 }}>
-                        <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                        <defs>
+                            <linearGradient id="colorFleetBookings" x1="0" y1="0" x2="1" y2="0">
+                                <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8} />
+                                <stop offset="95%" stopColor="#ef4444" stopOpacity={1} />
+                            </linearGradient>
+                            <linearGradient id="colorFleetRevenue" x1="0" y1="0" x2="1" y2="0">
+                                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
+                                <stop offset="95%" stopColor="#3b82f6" stopOpacity={1} />
+                            </linearGradient>
+                        </defs>
+                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke={isDark ? "#333" : "#e5e7eb"} />
                         <XAxis type="number" hide />
-                        <YAxis dataKey="name" type="category" width={100} stroke="#888888" fontSize={12} tickLine={false} axisLine={false} />
+                        <YAxis dataKey="name" type="category" width={110} stroke="#888888" fontSize={11} tickLine={false} axisLine={false} />
                         <Tooltip
-                            contentStyle={{ backgroundColor: 'var(--background)', borderRadius: '8px' }}
-                            cursor={{ fill: 'var(--muted)' }}
+                            contentStyle={{
+                                backgroundColor: isDark ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.9)',
+                                backdropFilter: 'blur(8px)',
+                                borderRadius: '8px',
+                                border: isDark ? '1px solid #333' : '1px solid #e5e7eb',
+                                color: isDark ? '#fff' : '#000',
+                                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                            }}
+                            cursor={{ fill: isDark ? '#222' : '#f3f4f6' }}
                         />
-                        <Legend />
-                        <Bar dataKey="bookings" fill="#ef4444" radius={[0, 4, 4, 0]} name="Bookings" barSize={20} />
-                        <Bar dataKey="revenue" fill="#3b82f6" radius={[0, 4, 4, 0]} name="Revenue" barSize={20} />
+                        <Legend iconType="circle" />
+                        <Bar dataKey="bookings" fill="url(#colorFleetBookings)" radius={[0, 4, 4, 0]} name="Bookings" barSize={12} />
+                        <Bar dataKey="revenue" fill="url(#colorFleetRevenue)" radius={[0, 4, 4, 0]} name="Revenue" barSize={12} />
                     </BarChart>
                 </ResponsiveContainer>
             </CardContent>

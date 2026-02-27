@@ -110,19 +110,19 @@ export function Footer() {
                     {/* Contact Info */}
                     <div className="text-center md:text-start">
                         <h4 className="font-bold text-lg mb-6">{t.footer_contact_heading}</h4>
-                        <ul className="space-y-4 text-gray-400 text-sm">
-                            <li className="flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-3">
+                        <ul className="space-y-4 text-gray-400 text-sm" dir="ltr">
+                            <li className="flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start gap-2 md:gap-3">
                                 <MapPin className="h-5 w-5 text-primary shrink-0" />
                                 <span>{t.footer_address}</span>
                             </li>
-                            <li className="flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-3">
+                            <li className="flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start gap-2 md:gap-3">
                                 <Phone className="h-5 w-5 text-primary shrink-0" />
                                 <div className="flex flex-col">
                                     <Link href="tel:+212528210909" className="hover:text-white transition-colors py-1">05 28 21 09 09</Link>
                                     <Link href="tel:+212671920545" className="hover:text-white transition-colors py-1">06 71 92 05 45</Link>
                                 </div>
                             </li>
-                            <li className="flex flex-col md:flex-row items-center md:items-start gap-2 md:gap-3">
+                            <li className="flex flex-col md:flex-row items-center md:items-start justify-center md:justify-start gap-2 md:gap-3">
                                 <Mail className="h-5 w-5 text-primary shrink-0" />
                                 <Link href="mailto:driversmisters@gmail.com" className="hover:text-white transition-colors py-1">
                                     driversmisters@gmail.com
