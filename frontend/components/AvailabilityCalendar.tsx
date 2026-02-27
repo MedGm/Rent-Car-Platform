@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n";
 
 interface UnavailableRange {
     start: string;
@@ -11,6 +12,7 @@ interface UnavailableRange {
 }
 
 export function AvailabilityCalendar({ carId }: { carId: number }) {
+    const { t } = useLanguage();
     const [currentDate, setCurrentDate] = useState(new Date());
     const [unavailableRanges, setUnavailableRanges] = useState<UnavailableRange[]>([]);
     const [loading, setLoading] = useState(true);
@@ -73,7 +75,7 @@ export function AvailabilityCalendar({ carId }: { carId: number }) {
     return (
         <div className="rounded-xl border bg-card p-6 shadow-lg hover:shadow-xl transition-all duration-300">
             <div className="mb-6 flex flex-col gap-4 items-center">
-                <h3 className="font-bold text-xl tracking-tight text-center w-full">Check Availability</h3>
+                <h3 className="font-bold text-xl tracking-tight text-center w-full">{t.car_details_check_availability}</h3>
                 <div className="flex w-full items-center justify-between bg-secondary/50 p-1.5 rounded-full">
                     <button onClick={prevMonth} className="rounded-full p-2 hover:bg-white hover:shadow-sm transition-all text-muted-foreground hover:text-foreground">
                         <ChevronLeft className="h-4 w-4" />
@@ -111,7 +113,7 @@ export function AvailabilityCalendar({ carId }: { carId: number }) {
                                     : "bg-secondary/30 text-foreground hover:bg-primary hover:text-primary-foreground hover:shadow-md hover:scale-105"
                                 , isToday && !booked && "bg-primary/5 text-primary ring-2 ring-primary ring-offset-2"
                             )}
-                            title={booked ? "Booked" : "Available"}
+                            title={booked ? t.car_details_booked : t.car_details_available}
                         >
                             {day}
                             {booked && (
@@ -125,11 +127,11 @@ export function AvailabilityCalendar({ carId }: { carId: number }) {
             <div className="mt-6 flex justify-center gap-8 text-xs font-medium border-t pt-4">
                 <div className="flex items-center gap-2">
                     <div className="h-3 w-3 rounded-full bg-secondary/30 ring-1 ring-inset ring-foreground/10"></div>
-                    <span className="text-muted-foreground">Available</span>
+                    <span className="text-muted-foreground">{t.car_details_available}</span>
                 </div>
                 <div className="flex items-center gap-2">
                     <div className="h-3 w-3 rounded-full bg-red-50 ring-1 ring-inset ring-red-200"></div>
-                    <span className="text-muted-foreground">Booked</span>
+                    <span className="text-muted-foreground">{t.car_details_booked}</span>
                 </div>
             </div>
         </div>

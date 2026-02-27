@@ -83,6 +83,27 @@ type TranslationKeys = {
     contracts_btn_contract: string;
     contracts_btn_invoice: string;
 
+    // Cars Page
+    cars_page_title_1: string;
+    cars_page_title_2: string;
+    cars_page_desc: string;
+
+    // Car Details Page
+    car_details_back: string;
+    car_details_specs: string;
+    car_details_features: string;
+    car_details_direct_booking: string;
+    car_details_contact_whatsapp: string;
+    car_details_chat_to_book: string;
+    car_details_or: string;
+    car_details_request_booking: string;
+    car_details_instant_response: string;
+    car_details_check_availability: string;
+    car_details_available: string;
+    car_details_booked: string;
+    car_details_verified_listing: string;
+    car_details_managed_directly: string;
+
     // Date locale
     date_locale: string;
 };
@@ -167,6 +188,27 @@ const translations: Record<Locale, TranslationKeys> = {
         contracts_btn_contract: "Contract",
         contracts_btn_invoice: "Invoice",
 
+        // Cars Page
+        cars_page_title_1: "Our",
+        cars_page_title_2: "Fleet",
+        cars_page_desc: "Choose from our exclusive collection of premium vehicles.",
+
+        // Car Details Page
+        car_details_back: "Back to Fleet",
+        car_details_specs: "Vehicle Specifications",
+        car_details_features: "Key Features",
+        car_details_direct_booking: "Direct Booking",
+        car_details_contact_whatsapp: "Contact via WhatsApp",
+        car_details_chat_to_book: "Chat to Book",
+        car_details_or: "Or",
+        car_details_request_booking: "Request Booking",
+        car_details_instant_response: "Instant response time. No hidden fees.",
+        car_details_check_availability: "Check Availability",
+        car_details_available: "Available",
+        car_details_booked: "Booked",
+        car_details_verified_listing: "Verified Listing.",
+        car_details_managed_directly: "This car is managed directly by our agency.",
+
         // Date locale
         date_locale: "en-US",
     },
@@ -248,6 +290,27 @@ const translations: Record<Locale, TranslationKeys> = {
         contracts_btn_contract: "Contrat",
         contracts_btn_invoice: "Facture",
 
+        // Cars Page
+        cars_page_title_1: "Notre",
+        cars_page_title_2: "Flotte",
+        cars_page_desc: "Choisissez parmi notre collection exclusive de véhicules premium.",
+
+        // Car Details Page
+        car_details_back: "Retour à la Flotte",
+        car_details_specs: "Spécifications du Véhicule",
+        car_details_features: "Caractéristiques Principales",
+        car_details_direct_booking: "Réservation Directe",
+        car_details_contact_whatsapp: "Contact via WhatsApp",
+        car_details_chat_to_book: "Discuter pour Réserver",
+        car_details_or: "Ou",
+        car_details_request_booking: "Demander une Réservation",
+        car_details_instant_response: "Temps de réponse instantané. Aucun frais caché.",
+        car_details_check_availability: "Vérifier la Disponibilité",
+        car_details_available: "Disponible",
+        car_details_booked: "Réservé",
+        car_details_verified_listing: "Annonce Vérifiée.",
+        car_details_managed_directly: "Cette voiture est gérée directement par notre agence.",
+
         // Date locale
         date_locale: "fr-FR",
     },
@@ -328,6 +391,27 @@ const translations: Record<Locale, TranslationKeys> = {
         contracts_download_invoice: "الفاتورة",
         contracts_btn_contract: "العقد",
         contracts_btn_invoice: "الفاتورة",
+
+        // Cars Page
+        cars_page_title_1: "أسطولنا",
+        cars_page_title_2: "المميز",
+        cars_page_desc: "اختر من مجموعتنا الحصرية من السيارات الفاخرة.",
+
+        // Car Details Page
+        car_details_back: "العودة إلى الأسطول",
+        car_details_specs: "مواصفات المركبة",
+        car_details_features: "الميزات الرئيسية",
+        car_details_direct_booking: "حجز مباشر",
+        car_details_contact_whatsapp: "التواصل عبر واتساب",
+        car_details_chat_to_book: "دردش للحجز",
+        car_details_or: "أو",
+        car_details_request_booking: "طلب حجز",
+        car_details_instant_response: "وقت استجابة فوري. لا توجد رسوم خفية.",
+        car_details_check_availability: "التحقق من التوفر",
+        car_details_available: "متاح",
+        car_details_booked: "محجوز",
+        car_details_verified_listing: "قائمة موثقة.",
+        car_details_managed_directly: "تُدار هذه السيارة مباشرة من قبل وكالتنا.",
 
         // Date locale
         date_locale: "ar-MA",

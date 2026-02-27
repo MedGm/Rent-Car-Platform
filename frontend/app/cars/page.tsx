@@ -5,6 +5,7 @@ import { Navbar } from "@/components/Navbar";
 import { CarCard } from "@/components/CarCard";
 import { Footer } from "@/components/Footer";
 import Image from "next/image";
+import { useLanguage } from "@/lib/i18n";
 
 interface Car {
     id: number;
@@ -17,6 +18,7 @@ interface Car {
 }
 
 export default function CarsPage() {
+    const { t } = useLanguage();
     const [cars, setCars] = useState<Car[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -56,10 +58,10 @@ export default function CarsPage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-background via-black/20 to-transparent" />
                 <div className="container mx-auto relative z-10 flex h-full flex-col items-center justify-center text-center text-white">
                     <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl uppercase drop-shadow-lg">
-                        Our <span className="text-primary">Fleet</span>
+                        {t.cars_page_title_1} <span className="text-primary">{t.cars_page_title_2}</span>
                     </h1>
                     <p className="mt-4 max-w-xl text-lg text-gray-200">
-                        Choose from our exclusive collection of premium vehicles.
+                        {t.cars_page_desc}
                     </p>
                 </div>
             </section>
