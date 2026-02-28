@@ -104,6 +104,71 @@ type TranslationKeys = {
     car_details_verified_listing: string;
     car_details_managed_directly: string;
 
+    // Booking Form
+    booking_title: string;
+    booking_success_title: string;
+    booking_success_desc: string;
+    booking_error_unavailable: string;
+    booking_error_overlap: string;
+    booking_period: string;
+    booking_start_date: string;
+    booking_end_date: string;
+    booking_delivery: string;
+    booking_delivery_ph: string;
+    booking_return: string;
+    booking_return_ph: string;
+    booking_estimated_total: string;
+    booking_days: string;
+    booking_personal: string;
+    booking_name: string;
+    booking_name_ph: string;
+    booking_email: string;
+    booking_phone: string;
+    booking_dob: string;
+    booking_nationality: string;
+    booking_address_ma: string;
+    booking_address_abroad: string;
+    booking_id_license: string;
+    booking_license_no: string;
+    booking_issued_at: string;
+    booking_license_front: string;
+    booking_license_back: string;
+    booking_cin: string;
+    booking_cin_valid: string;
+    booking_cin_front: string;
+    booking_cin_back: string;
+    booking_passport: string;
+    booking_submit: string;
+    booking_submitting: string;
+    booking_dates_unavailable: string;
+    booking_upload: string;
+
+    // DB String Mappings
+    mapped_luxury_suv: string;
+    mapped_economy: string;
+    mapped_compact: string;
+    mapped_sports: string;
+
+    mapped_seats: string;
+    mapped_fuel: string;
+    mapped_transmission: string;
+    mapped_engine: string;
+    mapped_horsepower: string;
+
+    mapped_diesel: string;
+    mapped_petrol: string;
+    mapped_essence: string;
+    mapped_automatic: string;
+    mapped_automatique: string;
+    mapped_manual: string;
+
+    mapped_bluetooth_audio: string;
+    mapped_navigation_system: string;
+    mapped_leather_seats: string;
+    mapped_parking_sensors: string;
+    mapped_cruise_control: string;
+    mapped_apple_carplay: string;
+
     // Date locale
     date_locale: string;
 };
@@ -209,6 +274,71 @@ const translations: Record<Locale, TranslationKeys> = {
         car_details_verified_listing: "Verified Listing.",
         car_details_managed_directly: "This car is managed directly by our agency.",
 
+        // Booking Form
+        booking_title: "Request to Rent",
+        booking_success_title: "Request Sent!",
+        booking_success_desc: "We will contact you shortly to confirm.",
+        booking_error_unavailable: "This car is not available for the selected dates.",
+        booking_error_overlap: "These dates overlap with an existing reservation",
+        booking_period: "Rental Period",
+        booking_start_date: "Start Date *",
+        booking_end_date: "End Date *",
+        booking_delivery: "Delivery Location",
+        booking_delivery_ph: "e.g. Agadir Airport",
+        booking_return: "Return Location",
+        booking_return_ph: "e.g. Agadir Airport",
+        booking_estimated_total: "Estimated Total",
+        booking_days: "days",
+        booking_personal: "Personal Information",
+        booking_name: "Full Name *",
+        booking_name_ph: "Full name as on ID",
+        booking_email: "Email *",
+        booking_phone: "Phone *",
+        booking_dob: "Date of Birth *",
+        booking_nationality: "Nationality *",
+        booking_address_ma: "Address in Morocco",
+        booking_address_abroad: "Address Abroad",
+        booking_id_license: "Identity & License",
+        booking_license_no: "Driver's License N° *",
+        booking_issued_at: "Issued At",
+        booking_license_front: "License — Front",
+        booking_license_back: "License — Back",
+        booking_cin: "C.I.N. N°",
+        booking_cin_valid: "C.I.N. Valid Until",
+        booking_cin_front: "C.I.N. — Front",
+        booking_cin_back: "C.I.N. — Back",
+        booking_passport: "Passport N°",
+        booking_submit: "Submit Request",
+        booking_submitting: "Submitting...",
+        booking_dates_unavailable: "Dates Unavailable",
+        booking_upload: "Upload photo",
+
+        // DB String Mappings
+        mapped_luxury_suv: "Luxury SUV",
+        mapped_economy: "Economy",
+        mapped_compact: "Compact",
+        mapped_sports: "Sports",
+
+        mapped_seats: "Seats",
+        mapped_fuel: "Fuel",
+        mapped_transmission: "Transmission",
+        mapped_engine: "Engine",
+        mapped_horsepower: "Horsepower",
+
+        mapped_diesel: "Diesel",
+        mapped_petrol: "Petrol",
+        mapped_essence: "Petrol",
+        mapped_automatic: "Automatic",
+        mapped_automatique: "Automatic",
+        mapped_manual: "Manual",
+
+        mapped_bluetooth_audio: "Bluetooth Audio",
+        mapped_navigation_system: "Navigation System",
+        mapped_leather_seats: "Leather Seats",
+        mapped_parking_sensors: "Parking Sensors",
+        mapped_cruise_control: "Cruise Control",
+        mapped_apple_carplay: "Apple CarPlay",
+
         // Date locale
         date_locale: "en-US",
     },
@@ -311,6 +441,71 @@ const translations: Record<Locale, TranslationKeys> = {
         car_details_verified_listing: "Annonce Vérifiée.",
         car_details_managed_directly: "Cette voiture est gérée directement par notre agence.",
 
+        // Booking Form
+        booking_title: "Demande de location",
+        booking_success_title: "Demande envoyée !",
+        booking_success_desc: "Nous vous contacterons très bientôt pour confirmer.",
+        booking_error_unavailable: "Cette voiture n'est pas disponible pour les dates sélectionnées.",
+        booking_error_overlap: "Ces dates chevauchent une réservation existante",
+        booking_period: "Période de location",
+        booking_start_date: "Date de début *",
+        booking_end_date: "Date de fin *",
+        booking_delivery: "Lieu de livraison",
+        booking_delivery_ph: "ex. Aéroport d'Agadir",
+        booking_return: "Lieu de retour",
+        booking_return_ph: "ex. Aéroport d'Agadir",
+        booking_estimated_total: "Total estimé",
+        booking_days: "jours",
+        booking_personal: "Informations personnelles",
+        booking_name: "Nom complet *",
+        booking_name_ph: "Nom complet comme sur la pièce d'identité",
+        booking_email: "E-mail *",
+        booking_phone: "Téléphone *",
+        booking_dob: "Date de naissance *",
+        booking_nationality: "Nationalité *",
+        booking_address_ma: "Adresse au Maroc",
+        booking_address_abroad: "Adresse à l'étranger",
+        booking_id_license: "Identité et Permis",
+        booking_license_no: "N° de permis de conduire *",
+        booking_issued_at: "Délivré à",
+        booking_license_front: "Permis — Recto",
+        booking_license_back: "Permis — Verso",
+        booking_cin: "N° CIN / CNI",
+        booking_cin_valid: "Valable jusqu'au",
+        booking_cin_front: "CIN — Recto",
+        booking_cin_back: "CIN — Verso",
+        booking_passport: "N° de passeport",
+        booking_submit: "Soumettre la demande",
+        booking_submitting: "Envoi en cours...",
+        booking_dates_unavailable: "Dates non disponibles",
+        booking_upload: "Télécharger la photo",
+
+        // DB String Mappings
+        mapped_luxury_suv: "SUV de Luxe",
+        mapped_economy: "Économique",
+        mapped_compact: "Compacte",
+        mapped_sports: "Sportive",
+
+        mapped_seats: "Places",
+        mapped_fuel: "Carburant",
+        mapped_transmission: "Boîte de vitesses",
+        mapped_engine: "Moteur",
+        mapped_horsepower: "Puissance",
+
+        mapped_diesel: "Diesel",
+        mapped_petrol: "Essence",
+        mapped_essence: "Essence",
+        mapped_automatic: "Automatique",
+        mapped_automatique: "Automatique",
+        mapped_manual: "Manuelle",
+
+        mapped_bluetooth_audio: "Audio Bluetooth",
+        mapped_navigation_system: "Système de Navigation",
+        mapped_leather_seats: "Sièges en Cuir",
+        mapped_parking_sensors: "Capteurs de Stationnement",
+        mapped_cruise_control: "Régulateur de Vitesse",
+        mapped_apple_carplay: "Apple CarPlay",
+
         // Date locale
         date_locale: "fr-FR",
     },
@@ -412,6 +607,71 @@ const translations: Record<Locale, TranslationKeys> = {
         car_details_booked: "محجوز",
         car_details_verified_listing: "قائمة موثقة.",
         car_details_managed_directly: "تُدار هذه السيارة مباشرة من قبل وكالتنا.",
+
+        // Booking Form
+        booking_title: "طلب استئجار",
+        booking_success_title: "تم إرسال الطلب!",
+        booking_success_desc: "سنتصل بك قريباً للتأكيد.",
+        booking_error_unavailable: "هذه السيارة غير متوفرة للتواريخ المحددة.",
+        booking_error_overlap: "هذه التواريخ تتعارض مع حجز حالي للمركبة",
+        booking_period: "فترة الإيجار",
+        booking_start_date: "تاريخ البدء *",
+        booking_end_date: "تاريخ الانتهاء *",
+        booking_delivery: "موقع التسليم",
+        booking_delivery_ph: "مثال: مطار أكادير",
+        booking_return: "موقع الإرجاع",
+        booking_return_ph: "مثال: مطار أكادير",
+        booking_estimated_total: "الإجمالي المقدر",
+        booking_days: "أيام",
+        booking_personal: "معلومات شخصية",
+        booking_name: "الاسم الكامل *",
+        booking_name_ph: "الاسم الكامل كما في الهوية",
+        booking_email: "البريد الإلكتروني *",
+        booking_phone: "رقم الهاتف *",
+        booking_dob: "تاريخ الميلاد *",
+        booking_nationality: "الجنسية *",
+        booking_address_ma: "العنوان في المغرب",
+        booking_address_abroad: "العنوان في الخارج",
+        booking_id_license: "الهوية والرخصة",
+        booking_license_no: "رقم رخصة القيادة *",
+        booking_issued_at: "مكان الإصدار",
+        booking_license_front: "الرخصة — الوجه الأمامي",
+        booking_license_back: "الرخصة — الوجه الخلفي",
+        booking_cin: "رقم البطاقة الوطنية",
+        booking_cin_valid: "صالحة حتى",
+        booking_cin_front: "البطاقة الوطنية — الوجه الأمامي",
+        booking_cin_back: "البطاقة الوطنية — الوجه الخلفي",
+        booking_passport: "رقم الجواز",
+        booking_submit: "إرسال الطلب",
+        booking_submitting: "جاري الإرسال...",
+        booking_dates_unavailable: "التواريخ غير متوفرة",
+        booking_upload: "رفع صورة",
+
+        // DB String Mappings
+        mapped_luxury_suv: "سيارة دفع رباعي فاخرة",
+        mapped_economy: "اقتصادية",
+        mapped_compact: "مدمجة",
+        mapped_sports: "رياضية",
+
+        mapped_seats: "المقاعد",
+        mapped_fuel: "الوقود",
+        mapped_transmission: "ناقل الحركة",
+        mapped_engine: "المحرك",
+        mapped_horsepower: "قوة الحصان",
+
+        mapped_diesel: "ديزل",
+        mapped_petrol: "بنزين",
+        mapped_essence: "بنزين",
+        mapped_automatic: "أوتوماتيك",
+        mapped_automatique: "أوتوماتيك",
+        mapped_manual: "يدوي",
+
+        mapped_bluetooth_audio: "بلوتوث صوت",
+        mapped_navigation_system: "نظام الملاحة",
+        mapped_leather_seats: "مقاعد جلدية",
+        mapped_parking_sensors: "حساسات ركن",
+        mapped_cruise_control: "مثبت السرعة",
+        mapped_apple_carplay: "آبل كاربلاي",
 
         // Date locale
         date_locale: "ar-MA",

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { AvailabilityCalendar } from "@/components/AvailabilityCalendar";
 import ClientBookingWrapper from "@/components/ClientBookingWrapper";
 import { ImageCarousel } from "@/components/ImageCarousel";
+import { LanguageSelector } from "@/components/LanguageSelector";
 import { useLanguage } from "@/lib/i18n";
 import {
     ArrowLeft,
@@ -35,6 +36,12 @@ const FEATURES = [
     { name: "Apple CarPlay", icon: Smartphone, color: "text-foreground", bg: "bg-secondary/20" },
 ];
 
+function translateDbString(t: any, str: any): string {
+    if (typeof str !== 'string') return String(str);
+    const key = `mapped_${str.toLowerCase().replace(/[\s-]/g, '_')}`;
+    return t[key] || str;
+}
+
 export function CarDetailsContent({ car }: { car: any }) {
     const { t } = useLanguage();
 
@@ -45,11 +52,14 @@ export function CarDetailsContent({ car }: { car: any }) {
     return (
         <main className="min-h-screen bg-background pb-20">
 
-            {/* Top bar with back link */}
-            <div className="container mx-auto px-4 pt-6">
+            {/* Top bar with back link and Language Selector */}
+            <div className="container mx-auto px-4 pt-6 flex items-center justify-between">
                 <Link href="/cars" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                     <ArrowLeft className="me-2 h-4 w-4" /> {t.car_details_back}
                 </Link>
+                <div className="flex items-center z-50">
+                    <LanguageSelector className="bg-secondary/50 text-foreground hover:bg-secondary" />
+                </div>
             </div>
 
             <div className="container mx-auto px-4 mt-6 grid gap-10 lg:grid-cols-3">
@@ -63,7 +73,7 @@ export function CarDetailsContent({ car }: { car: any }) {
                         )}
                         <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{car.name}</h1>
                         <div className="rounded-full bg-primary px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary-foreground">
-                            {car.category}
+                            {translateDbString(t, car.category)}
                         </div>
                     </div>
 
@@ -86,9 +96,9 @@ export function CarDetailsContent({ car }: { car: any }) {
                                     <div key={key} className="rounded-xl border bg-card p-3 sm:p-4">
                                         <div className="flex items-center gap-2">
                                             {SpecIcon && <SpecIcon className="h-4 w-4 text-red-500" />}
-                                            <div className="text-xs font-medium uppercase text-muted-foreground">{key}</div>
+                                            <div className="text-xs font-medium uppercase text-muted-foreground">{translateDbString(t, key)}</div>
                                         </div>
-                                        <div className="mt-1 text-lg font-bold capitalize">{String(value)}</div>
+                                        <div className="mt-1 text-lg font-bold capitalize">{translateDbString(t, value)}</div>
                                     </div>
                                 );
                             })}
@@ -106,7 +116,7 @@ export function CarDetailsContent({ car }: { car: any }) {
                                         <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${feat.bg}`}>
                                             <Icon className={`h-5 w-5 ${feat.color}`} />
                                         </div>
-                                        <span className="font-medium">{feat.name}</span>
+                                        <span className="font-medium">{translateDbString(t, feat.name)}</span>
                                     </div>
                                 );
                             })}

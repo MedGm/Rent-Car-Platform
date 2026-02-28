@@ -5,6 +5,7 @@ import { X, Calendar, CheckCircle, AlertCircle, Upload, ImageIcon } from "lucide
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/lib/i18n";
 
 interface UnavailableRange {
     start: string;
@@ -21,6 +22,7 @@ interface BookingFormProps {
 }
 
 export function BookingForm({ carId, carName, pricePerDay, isOpen, onClose }: BookingFormProps) {
+    const { t, locale } = useLanguage();
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState("");
@@ -114,7 +116,7 @@ export function BookingForm({ carId, carName, pricePerDay, isOpen, onClose }: Bo
         e.preventDefault();
         setError("");
         if (dateConflict) {
-            setError("This car is not available for the selected dates.");
+            setError(t.booking_error_unavailable);
             return;
         }
         setLoading(true);
@@ -153,10 +155,10 @@ export function BookingForm({ carId, carName, pricePerDay, isOpen, onClose }: Bo
             <div className="w-full max-w-2xl rounded-3xl bg-background p-0 shadow-2xl animate-in zoom-in-95 duration-200 overflow-hidden max-h-[90vh] flex flex-col">
                 <div className="bg-neutral-900 p-6 text-white flex items-center justify-between shrink-0">
                     <div>
-                        <h2 className="text-2xl font-bold tracking-tight">Request to Rent</h2>
+                        <h2 className="text-2xl font-bold tracking-tight">{t.booking_title}</h2>
                         <div className="flex items-center gap-2 mt-1">
                             <span className="text-neutral-400 text-sm">{carName}</span>
-                            {pricePerDay > 0 && <span className="bg-white/20 text-xs px-2 py-0.5 rounded-full">{pricePerDay} DH/day</span>}
+                            {pricePerDay > 0 && <span className="bg-white/20 text-xs px-2 py-0.5 rounded-full">{pricePerDay} DH{t.car_per_day}</span>}
                         </div>
                     </div>
                     <button onClick={onClose} className="rounded-full bg-white/10 p-2 hover:bg-white/20 transition-colors">
@@ -171,8 +173,8 @@ export function BookingForm({ carId, carName, pricePerDay, isOpen, onClose }: Bo
                                 <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
                             </div>
                             <div>
-                                <h3 className="text-xl font-bold">Request Sent!</h3>
-                                <p className="text-muted-foreground">We will contact you shortly to confirm.</p>
+                                <h3 className="text-xl font-bold">{t.booking_success_title}</h3>
+                                <p className="text-muted-foreground">{t.booking_success_desc}</p>
                             </div>
                         </div>
                     ) : (
@@ -186,16 +188,16 @@ export function BookingForm({ carId, carName, pricePerDay, isOpen, onClose }: Bo
 
                             {/* ── Section: Rental Dates ── */}
                             <fieldset className="space-y-4">
-                                <legend className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-2">Rental Period</legend>
+                                <legend className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-2">{t.booking_period}</legend>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-1.5">
-                                        <Label htmlFor="start_date">Start Date *</Label>
+                                        <Label htmlFor="start_date">{t.booking_start_date}</Label>
                                         <Input id="start_date" type="date" required value={formData.start_date}
                                             onChange={(e) => handleDateChange("start_date", e.target.value)}
                                             className={`h-10 ${dateConflict ? 'border-red-400 ring-1 ring-red-400' : ''}`} />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <Label htmlFor="end_date">End Date *</Label>
+                                        <Label htmlFor="end_date">{t.booking_end_date}</Label>
                                         <Input id="end_date" type="date" required value={formData.end_date}
                                             onChange={(e) => handleDateChange("end_date", e.target.value)}
                                             className={`h-10 ${dateConflict ? 'border-red-400 ring-1 ring-red-400' : ''}`} />
@@ -205,10 +207,10 @@ export function BookingForm({ carId, carName, pricePerDay, isOpen, onClose }: Bo
                                 {days > 0 && totalPrice > 0 && (
                                     <div className="bg-primary/5 dark:bg-primary/10 border border-primary/20 rounded-xl p-4 flex justify-between items-center">
                                         <div>
-                                            <div className="text-sm font-medium text-muted-foreground">Estimated Total</div>
-                                            <div className="text-xs text-muted-foreground">{days} days x {pricePerDay} DH</div>
+                                            <div className="text-sm font-medium text-muted-foreground">{t.booking_estimated_total}</div>
+                                            <div className="text-xs text-muted-foreground">{days} {t.booking_days} x {pricePerDay} DH</div>
                                         </div>
-                                        <div className="text-2xl font-extrabold text-primary">
+                                        <div className="text-2xl font-extrabold text-primary" dir="ltr">
                                             {totalPrice.toLocaleString()} DH
                                         </div>
                                     </div>
@@ -217,18 +219,18 @@ export function BookingForm({ carId, carName, pricePerDay, isOpen, onClose }: Bo
                                 {dateConflict && (
                                     <p className="text-sm text-red-600 flex items-center gap-1.5">
                                         <AlertCircle className="h-3.5 w-3.5" />
-                                        These dates overlap with an existing reservation
+                                        {t.booking_error_overlap}
                                     </p>
                                 )}
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-1.5">
-                                        <Label htmlFor="delivery_location">Delivery Location</Label>
-                                        <Input id="delivery_location" placeholder="e.g. Agadir Airport" value={formData.delivery_location}
+                                        <Label htmlFor="delivery_location">{t.booking_delivery}</Label>
+                                        <Input id="delivery_location" placeholder={t.booking_delivery_ph} value={formData.delivery_location}
                                             onChange={(e) => updateField("delivery_location", e.target.value)} className="h-10" />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <Label htmlFor="return_location">Return Location</Label>
-                                        <Input id="return_location" placeholder="e.g. Agadir Airport" value={formData.return_location}
+                                        <Label htmlFor="return_location">{t.booking_return}</Label>
+                                        <Input id="return_location" placeholder={t.booking_return_ph} value={formData.return_location}
                                             onChange={(e) => updateField("return_location", e.target.value)} className="h-10" />
                                     </div>
                                 </div>
@@ -238,43 +240,43 @@ export function BookingForm({ carId, carName, pricePerDay, isOpen, onClose }: Bo
 
                             {/* ── Section: Personal Info ── */}
                             <fieldset className="space-y-4">
-                                <legend className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-2">Personal Information</legend>
+                                <legend className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-2">{t.booking_personal}</legend>
                                 <div className="space-y-1.5">
-                                    <Label htmlFor="driver_name">Full Name *</Label>
-                                    <Input id="driver_name" required placeholder="Full name as on ID" value={formData.driver_name}
+                                    <Label htmlFor="driver_name">{t.booking_name}</Label>
+                                    <Input id="driver_name" required placeholder={t.booking_name_ph} value={formData.driver_name}
                                         onChange={(e) => updateField("driver_name", e.target.value)} className="h-10" />
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-1.5">
-                                        <Label htmlFor="email">Email *</Label>
+                                        <Label htmlFor="email">{t.booking_email}</Label>
                                         <Input id="email" type="email" required placeholder="john@example.com" value={formData.email}
                                             onChange={(e) => updateField("email", e.target.value)} className="h-10" />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <Label htmlFor="phone">Phone *</Label>
-                                        <Input id="phone" type="tel" required placeholder="+212 6XX XXX XXX" value={formData.phone}
+                                        <Label htmlFor="phone">{t.booking_phone}</Label>
+                                        <Input id="phone" type="tel" required placeholder="+212 6XX XXX XXX" value={formData.phone} dir="ltr"
                                             onChange={(e) => updateField("phone", e.target.value)} className="h-10" />
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-1.5">
-                                        <Label htmlFor="birth_date">Date of Birth *</Label>
+                                        <Label htmlFor="birth_date">{t.booking_dob}</Label>
                                         <Input id="birth_date" type="date" required value={formData.birth_date}
                                             onChange={(e) => updateField("birth_date", e.target.value)} className="h-10" />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <Label htmlFor="nationality">Nationality *</Label>
+                                        <Label htmlFor="nationality">{t.booking_nationality}</Label>
                                         <Input id="nationality" required placeholder="e.g. Moroccan" value={formData.nationality}
                                             onChange={(e) => updateField("nationality", e.target.value)} className="h-10" />
                                     </div>
                                 </div>
                                 <div className="space-y-1.5">
-                                    <Label htmlFor="address_morocco">Address in Morocco</Label>
+                                    <Label htmlFor="address_morocco">{t.booking_address_ma}</Label>
                                     <Input id="address_morocco" placeholder="Street, City" value={formData.address_morocco}
                                         onChange={(e) => updateField("address_morocco", e.target.value)} className="h-10" />
                                 </div>
                                 <div className="space-y-1.5">
-                                    <Label htmlFor="address_abroad">Address Abroad</Label>
+                                    <Label htmlFor="address_abroad">{t.booking_address_abroad}</Label>
                                     <Input id="address_abroad" placeholder="Street, City, Country" value={formData.address_abroad}
                                         onChange={(e) => updateField("address_abroad", e.target.value)} className="h-10" />
                                 </div>
@@ -284,16 +286,16 @@ export function BookingForm({ carId, carName, pricePerDay, isOpen, onClose }: Bo
 
                             {/* ── Section: Identity Documents ── */}
                             <fieldset className="space-y-4">
-                                <legend className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-2">Identity & License</legend>
+                                <legend className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-2">{t.booking_id_license}</legend>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-1.5">
-                                        <Label htmlFor="license_number">Driver&apos;s License N° *</Label>
-                                        <Input id="license_number" required placeholder="License number" value={formData.license_number}
+                                        <Label htmlFor="license_number">{t.booking_license_no}</Label>
+                                        <Input id="license_number" required placeholder="" value={formData.license_number}
                                             onChange={(e) => updateField("license_number", e.target.value)} className="h-10" />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <Label htmlFor="license_issued_at">Issued At</Label>
-                                        <Input id="license_issued_at" placeholder="City / Country" value={formData.license_issued_at}
+                                        <Label htmlFor="license_issued_at">{t.booking_issued_at}</Label>
+                                        <Input id="license_issued_at" placeholder="" value={formData.license_issued_at}
                                             onChange={(e) => updateField("license_issued_at", e.target.value)} className="h-10" />
                                     </div>
                                 </div>
@@ -301,13 +303,13 @@ export function BookingForm({ carId, carName, pricePerDay, isOpen, onClose }: Bo
                                 <div className="grid grid-cols-2 gap-4">
                                     <FileUploadField
                                         id="license_recto"
-                                        label="License — Front"
+                                        label={t.booking_license_front}
                                         file={files.license_recto}
                                         onChange={(f) => handleFileChange("license_recto", f)}
                                     />
                                     <FileUploadField
                                         id="license_verso"
-                                        label="License — Back"
+                                        label={t.booking_license_back}
                                         file={files.license_verso}
                                         onChange={(f) => handleFileChange("license_verso", f)}
                                     />
@@ -315,12 +317,12 @@ export function BookingForm({ carId, carName, pricePerDay, isOpen, onClose }: Bo
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-1.5">
-                                        <Label htmlFor="cin">C.I.N. N°</Label>
-                                        <Input id="cin" placeholder="National ID number" value={formData.cin}
+                                        <Label htmlFor="cin">{t.booking_cin}</Label>
+                                        <Input id="cin" placeholder="" value={formData.cin}
                                             onChange={(e) => updateField("cin", e.target.value)} className="h-10" />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <Label htmlFor="cin_valid_until">C.I.N. Valid Until</Label>
+                                        <Label htmlFor="cin_valid_until">{t.booking_cin_valid}</Label>
                                         <Input id="cin_valid_until" type="date" value={formData.cin_valid_until}
                                             onChange={(e) => updateField("cin_valid_until", e.target.value)} className="h-10" />
                                     </div>
@@ -329,28 +331,28 @@ export function BookingForm({ carId, carName, pricePerDay, isOpen, onClose }: Bo
                                 <div className="grid grid-cols-2 gap-4">
                                     <FileUploadField
                                         id="cin_recto"
-                                        label="C.I.N. — Front"
+                                        label={t.booking_cin_front}
                                         file={files.cin_recto}
                                         onChange={(f) => handleFileChange("cin_recto", f)}
                                     />
                                     <FileUploadField
                                         id="cin_verso"
-                                        label="C.I.N. — Back"
+                                        label={t.booking_cin_back}
                                         file={files.cin_verso}
                                         onChange={(f) => handleFileChange("cin_verso", f)}
                                     />
                                 </div>
 
                                 <div className="space-y-1.5">
-                                    <Label htmlFor="passport">Passport N°</Label>
-                                    <Input id="passport" placeholder="Passport number (if applicable)" value={formData.passport}
+                                    <Label htmlFor="passport">{t.booking_passport}</Label>
+                                    <Input id="passport" placeholder="" value={formData.passport}
                                         onChange={(e) => updateField("passport", e.target.value)} className="h-10" />
                                 </div>
                             </fieldset>
 
                             <Button type="submit" disabled={loading || dateConflict}
-                                className="w-full h-12 text-base font-bold bg-primary hover:bg-primary/90 mt-2 disabled:opacity-50">
-                                {loading ? "Submitting..." : dateConflict ? "Dates Unavailable" : "Submit Request"} <Calendar className="ms-2 h-4 w-4" />
+                                className={`w-full h-12 text-base font-bold bg-primary hover:bg-primary/90 mt-2 disabled:opacity-50 flex items-center justify-center gap-2 ${locale === 'ar' ? 'flex-row-reverse' : ''}`}>
+                                {loading ? t.booking_submitting : dateConflict ? t.booking_dates_unavailable : t.booking_submit} <Calendar className="h-4 w-4" />
                             </Button>
                         </form>
                     )}
@@ -366,6 +368,7 @@ function FileUploadField({ id, label, file, onChange }: {
     file: File | null;
     onChange: (file: File | null) => void;
 }) {
+    const { t } = useLanguage();
     const preview = file ? URL.createObjectURL(file) : null;
 
     return (
@@ -389,10 +392,10 @@ function FileUploadField({ id, label, file, onChange }: {
                         <p className="text-sm font-medium truncate">{file.name}</p>
                     ) : (
                         <p className="text-sm text-muted-foreground">
-                            <span className="font-medium text-primary">Upload</span> photo
+                            {t.booking_upload}
                         </p>
                     )}
-                    <p className="text-xs text-muted-foreground">JPG, PNG or PDF</p>
+                    <p className="text-xs text-muted-foreground">JPG, PNG, PDF</p>
                 </div>
                 {file && (
                     <button type="button" onClick={(e) => { e.preventDefault(); onChange(null); }}
